@@ -40,8 +40,15 @@ npm run build
 - Never write to the live Supabase database. Data and schema change only through files in `supabase/migrations/` and `supabase/seed/`. Dorien applies them.
 - Every table has Row Level Security on. Today: public read, no write. Design so edit roles (Fardau, Vincent) can be added later without a rebuild.
 - Never commit secrets. Keys live in `.env.local` (git-ignored) and Vercel settings.
-- Before starting a new task, check whether the current branch is behind origin/main.
-- If relevant updates exist, safely integrate them before implementing changes. Never discard uncommitted work.
+
+## Before each task
+- Run `git fetch origin`, then check if this branch is behind origin/main.
+- If it is: commit or stash your own work first, then `git merge origin/main`.
+- Never use reset --hard, checkout -- or stash drop. Never discard uncommitted work.
+- On a merge conflict: stop and ask me. Don't resolve it on your own.
+
+## After each task
+- Commit, push the branch and open a PR. Don't sync again.
 
 ## Before you open a PR
 1. `npm run lint`, `npm run typecheck`, `npm run build` all pass.
