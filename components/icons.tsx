@@ -27,6 +27,15 @@ export function ChevronDownIcon(props: IconProps) {
   );
 }
 
+export function ClockIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </svg>
+  );
+}
+
 export function MenuIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" {...defaults} {...props}>
@@ -69,6 +78,15 @@ export function SparkIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" {...defaults} {...props}>
       <path d="m12 2 1.2 4.2a6.4 6.4 0 0 0 4.5 4.5L22 12l-4.2 1.2a6.4 6.4 0 0 0-4.5 4.5L12 22l-1.2-4.2a6.4 6.4 0 0 0-4.5-4.5L2 12l4.2-1.2a6.4 6.4 0 0 0 4.5-4.5L12 2Z" />
+    </svg>
+  );
+}
+
+export function WarningTriangleIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="M10.4 4.1 2.8 17.3A1.8 1.8 0 0 0 4.4 20h15.2a1.8 1.8 0 0 0 1.6-2.7L13.6 4.1a1.8 1.8 0 0 0-3.2 0Z" />
+      <path d="M12 9v4.5M12 17h.01" />
     </svg>
   );
 }

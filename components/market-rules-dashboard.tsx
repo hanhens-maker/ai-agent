@@ -12,11 +12,13 @@ import { marketRuleProcesses } from "@/lib/data/market-rules";
 import {
   ArrowUpRightIcon,
   ChevronDownIcon,
+  ClockIcon,
   MenuIcon,
   RadarIcon,
   SearchIcon,
   SlidersIcon,
   SparkIcon,
+  WarningTriangleIcon,
 } from "@/components/icons";
 
 type FilterValue<T extends string> = "all" | T;
@@ -43,6 +45,17 @@ const processQuestions: Record<MarketRuleProcess, string> = {
   sales: "Which client rule opens a deal?",
 };
 
+const healthCategoryLabels: Record<MarketRuleProcess, string> = {
+  licence: "Licence",
+  risk: "Risk & procurement",
+  balancing: "Balancing",
+  data: "Market data",
+  billing: "Billing & tax",
+  customer: "Customer",
+  reporting: "Reporting",
+  sales: "Sales",
+};
+
 const impactStyles: Record<MarketRuleImpact, string> = {
   high: "border-[#062417] bg-[#062417] text-white",
   medium: "border-[#29ED9B] bg-[#CDFDE9] text-[#0C472F]",
@@ -60,6 +73,84 @@ function formatDate(date: string) {
     month: "short",
     year: "numeric",
   }).format(new Date(`${date}T00:00:00`));
+}
+
+function formatDeadline(date: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+  }).format(new Date(`${date}T00:00:00`));
+}
+
+function ComplianceHealth({
+  rules,
+  onViewRule,
+}: {
+  rules: MarketRule[];
+  onViewRule: (ruleId: string) => void;
+}) {
+  return (
+    <section
+      aria-labelledby="compliance-health-title"
+      className="rounded-[28px] bg-white p-5 shadow-[0_12px_32px_rgba(23,25,22,0.05)] sm:p-7 lg:p-8"
+    >
+      <div className="mb-6 flex items-center gap-2.5 sm:mb-8 sm:gap-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#eef1f3] text-[#252a2f] sm:size-12">
+          <WarningTriangleIcon className="size-5" />
+        </span>
+        <h2
+          id="compliance-health-title"
+          className="text-[22px] font-semibold tracking-[-0.035em] sm:text-[30px]"
+        >
+          Compliance health
+        </h2>
+        <span className="whitespace-nowrap text-xs text-[#8a9299] sm:text-base">
+          {rules.length} to look at
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {rules.map((rule) => (
+          <article
+            key={rule.id}
+            className="flex min-h-[210px] min-w-0 flex-col rounded-[22px] bg-[#f1f3f4] p-5 sm:p-6"
+          >
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <span className="pt-1 text-xs font-medium text-[#89929a] sm:text-sm">
+                {healthCategoryLabels[rule.process]}
+              </span>
+              {rule.key_date ? (
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border-2 border-[#cfd5da] px-3 py-1.5 text-xs font-medium text-[#515960] sm:text-sm">
+                  <ClockIcon className="size-3.5 text-[#87919a]" />
+                  by {formatDeadline(rule.key_date)}
+                </span>
+              ) : null}
+            </div>
+
+            <p
+              className="mt-8 overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium tracking-[-0.015em] text-[#1e2225] sm:text-lg"
+              title={`${rule.title} · ${rule.steps[0] ?? rule.impact_text}`}
+            >
+              {rule.title} · {rule.steps[0] ?? rule.impact_text}
+            </p>
+
+            <div className="mt-auto flex items-end justify-between gap-3 pt-8">
+              <span className="text-xs font-medium text-[#89929a] sm:text-sm">
+                {rule.status === "in_force" ? "In force" : "Coming"}
+              </span>
+              <button
+                type="button"
+                className="shrink-0 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-[#1e2225] shadow-[0_8px_18px_rgba(23,25,22,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(23,25,22,0.12)] focus:outline-none focus:ring-2 focus:ring-[#a8c800] focus:ring-offset-2 focus:ring-offset-[#f1f3f4]"
+                onClick={() => onViewRule(rule.id)}
+              >
+                View rule
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function SelectFilter<T extends string>({
@@ -93,16 +184,25 @@ function SelectFilter<T extends string>({
   );
 }
 
-function RuleCard({ rule }: { rule: MarketRule }) {
-  const [expanded, setExpanded] = useState(false);
-
+function RuleCard({
+  rule,
+  expanded,
+  onToggle,
+}: {
+  rule: MarketRule;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <article className="overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_10px_30px_rgba(12,71,47,0.08)] transition hover:-translate-y-0.5 hover:border-[#6EEEBA] hover:shadow-[0_14px_36px_rgba(12,71,47,0.13)]">
+    <article
+      id={`rule-${rule.id}`}
+      className="scroll-mt-24 overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_10px_30px_rgba(12,71,47,0.08)] transition hover:-translate-y-0.5 hover:border-[#6EEEBA] hover:shadow-[0_14px_36px_rgba(12,71,47,0.13)]"
+    >
       <button
         type="button"
         aria-expanded={expanded}
         className="grid w-full grid-cols-[auto_1fr_auto] gap-x-3 gap-y-3 p-5 text-left sm:gap-x-5 sm:p-6"
-        onClick={() => setExpanded((current) => !current)}
+        onClick={onToggle}
       >
         <span className="pt-0.5 font-mono text-xs font-semibold tracking-[0.08em] text-[#2AA370]">
           {rule.id}
@@ -216,6 +316,20 @@ export function MarketRulesDashboard({
   const [kind, setKind] = useState<FilterValue<MarketRuleKind>>("all");
   const [status, setStatus] = useState<FilterValue<MarketRuleStatus>>("all");
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const [expandedRuleId, setExpandedRuleId] = useState<string | null>(null);
+
+  const complianceRules = useMemo(
+    () =>
+      rules
+        .filter((rule) => rule.kind === "must")
+        .sort((first, second) => {
+          if (!first.key_date && !second.key_date) return 0;
+          if (!first.key_date) return 1;
+          if (!second.key_date) return -1;
+          return first.key_date.localeCompare(second.key_date);
+        }),
+    [rules],
+  );
 
   const filteredRules = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -261,6 +375,19 @@ export function MarketRulesDashboard({
     setProcess("all");
     setKind("all");
     setStatus("all");
+  }
+
+  function viewRule(ruleId: string) {
+    clearFilters();
+    setExpandedRuleId(ruleId);
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        document
+          .getElementById(`rule-${ruleId}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
   }
 
   return (
@@ -329,7 +456,9 @@ export function MarketRulesDashboard({
 
       <main id="top" className="lg:pl-[264px]">
         <div className="mx-auto max-w-[1440px] px-5 pb-20 pt-6 sm:px-8 sm:pt-8 lg:px-12 xl:px-16">
-          <section className="palette-wash green-panel-shadow grid items-end gap-8 overflow-hidden rounded-[32px] p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:gap-12 lg:p-12">
+          <ComplianceHealth rules={complianceRules} onViewRule={viewRule} />
+
+          <section className="palette-wash green-panel-shadow mt-6 grid items-end gap-8 overflow-hidden rounded-[32px] p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:gap-12 lg:p-12">
             <div>
               <div className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#0C472F]">
                 <span className="size-2 rounded-full bg-[#29ED9B] ring-4 ring-white/50" />
@@ -468,7 +597,16 @@ export function MarketRulesDashboard({
             {filteredRules.length ? (
               <div className="space-y-3">
                 {filteredRules.map((rule) => (
-                  <RuleCard key={rule.id} rule={rule} />
+                  <RuleCard
+                    key={rule.id}
+                    rule={rule}
+                    expanded={expandedRuleId === rule.id}
+                    onToggle={() =>
+                      setExpandedRuleId((current) =>
+                        current === rule.id ? null : rule.id,
+                      )
+                    }
+                  />
                 ))}
               </div>
             ) : (
