@@ -44,14 +44,14 @@ const processQuestions: Record<MarketRuleProcess, string> = {
 };
 
 const impactStyles: Record<MarketRuleImpact, string> = {
-  high: "border-[#171916] bg-[#171916] text-white",
-  medium: "border-[#f0b63e] bg-[#fff5d8] text-[#714a00]",
-  low: "border-[#c8cbc3] bg-[#f2f2ef] text-[#5d6259]",
+  high: "border-[#062417] bg-[#062417] text-white",
+  medium: "border-[#29ED9B] bg-[#CDFDE9] text-[#0C472F]",
+  low: "border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F]",
 };
 
 const kindStyles: Record<MarketRuleKind, string> = {
-  must: "bg-[#ffe4e0] text-[#9f3025]",
-  opp: "bg-[#e5f3dd] text-[#316528]",
+  must: "bg-[#0C472F] text-white",
+  opp: "bg-[#29ED9B] text-[#062417]",
 };
 
 function formatDate(date: string) {
@@ -77,7 +77,7 @@ function SelectFilter<T extends string>({
     <label className="relative min-w-[148px] flex-1 sm:flex-none">
       <span className="sr-only">{label}</span>
       <select
-        className="h-11 w-full appearance-none rounded-full border border-[#d4d4ce] bg-white pl-4 pr-10 text-sm font-medium text-[#343630] outline-none transition hover:border-[#95988e] focus:border-[#171916] focus:ring-2 focus:ring-[#d7fd58] sm:w-auto"
+        className="h-11 w-full appearance-none rounded-full border border-[#9BF3CF] bg-white pl-4 pr-10 text-sm font-medium text-[#062417] outline-none transition hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA] sm:w-auto"
         value={value}
         onChange={(event) => onChange(event.target.value as FilterValue<T>)}
       >
@@ -88,7 +88,7 @@ function SelectFilter<T extends string>({
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="pointer-events-none absolute right-3.5 top-3.5 size-4 text-[#60645b]" />
+      <ChevronDownIcon className="pointer-events-none absolute right-3.5 top-3.5 size-4 text-[#0C472F]" />
     </label>
   );
 }
@@ -97,14 +97,14 @@ function RuleCard({ rule }: { rule: MarketRule }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <article className="overflow-hidden rounded-[22px] border border-[#dbdcd5] bg-white shadow-[0_1px_0_rgba(23,25,22,0.04)] transition hover:border-[#bfc1b9]">
+    <article className="overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_10px_30px_rgba(12,71,47,0.08)] transition hover:-translate-y-0.5 hover:border-[#6EEEBA] hover:shadow-[0_14px_36px_rgba(12,71,47,0.13)]">
       <button
         type="button"
         aria-expanded={expanded}
         className="grid w-full grid-cols-[auto_1fr_auto] gap-x-3 gap-y-3 p-5 text-left sm:gap-x-5 sm:p-6"
         onClick={() => setExpanded((current) => !current)}
       >
-        <span className="pt-0.5 font-mono text-xs font-semibold tracking-[0.08em] text-[#777b71]">
+        <span className="pt-0.5 font-mono text-xs font-semibold tracking-[0.08em] text-[#2AA370]">
           {rule.id}
         </span>
         <span className="min-w-0">
@@ -114,14 +114,14 @@ function RuleCard({ rule }: { rule: MarketRule }) {
             >
               {rule.kind === "must" ? "Must comply" : "Sales opportunity"}
             </span>
-            <span className="text-xs font-medium capitalize text-[#777b71]">
+            <span className="text-xs font-medium capitalize text-[#2AA370]">
               {processLabels[rule.process]}
             </span>
           </span>
-          <span className="block text-[20px] font-semibold leading-[1.2] tracking-[-0.025em] text-[#171916] sm:text-[22px]">
+          <span className="block text-[20px] font-semibold leading-[1.2] tracking-[-0.025em] text-[#062417] sm:text-[22px]">
             {rule.title}
           </span>
-          <span className="mt-2.5 line-clamp-2 block max-w-3xl text-sm leading-6 text-[#5f635a]">
+          <span className="mt-2.5 line-clamp-2 block max-w-3xl text-sm leading-6 text-[#0C472F]/75">
             {rule.impact_text}
           </span>
         </span>
@@ -132,7 +132,7 @@ function RuleCard({ rule }: { rule: MarketRule }) {
             {rule.impact}
           </span>
           <span
-            className={`grid size-8 place-items-center rounded-full border border-[#dedfd9] text-[#4c5048] transition ${expanded ? "rotate-180 bg-[#f2f2ee]" : "bg-white"}`}
+            className={`grid size-8 place-items-center rounded-full border border-[#9BF3CF] text-[#0C472F] transition ${expanded ? "rotate-180 bg-[#CDFDE9]" : "bg-white"}`}
           >
             <ChevronDownIcon className="size-4" />
           </span>
@@ -140,29 +140,29 @@ function RuleCard({ rule }: { rule: MarketRule }) {
       </button>
 
       {expanded ? (
-        <div className="border-t border-[#e4e5df] bg-[#fafaf7] px-5 py-6 sm:px-[74px] sm:py-7">
+        <div className="border-t border-[#CDFDE9] bg-[#E4FCF2] px-5 py-6 sm:px-[74px] sm:py-7">
           <div className="grid gap-7 lg:grid-cols-[1.25fr_0.9fr] lg:gap-12">
             <div>
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.13em] text-[#777b71]">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.13em] text-[#2AA370]">
                 What the rule says
               </p>
-              <p className="text-sm leading-6 text-[#363933]">{rule.rule_text}</p>
+              <p className="text-sm leading-6 text-[#0C472F]">{rule.rule_text}</p>
 
-              <p className="mb-2 mt-6 text-[11px] font-bold uppercase tracking-[0.13em] text-[#777b71]">
+              <p className="mb-2 mt-6 text-[11px] font-bold uppercase tracking-[0.13em] text-[#2AA370]">
                 What this means for trawa
               </p>
-              <p className="text-sm leading-6 text-[#363933]">{rule.impact_text}</p>
+              <p className="text-sm leading-6 text-[#0C472F]">{rule.impact_text}</p>
             </div>
 
-            <div className="rounded-2xl border border-[#dfe0da] bg-white p-5">
-              <p className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.13em] text-[#777b71]">
-                <SparkIcon className="size-4 text-[#5c7500]" />
+            <div className="rounded-2xl border border-[#9BF3CF] bg-white p-5">
+              <p className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.13em] text-[#2AA370]">
+                <SparkIcon className="size-4 text-[#29ED9B]" />
                 Suggested process steps
               </p>
               <ol className="space-y-3">
                 {rule.steps.map((step, index) => (
-                  <li key={step} className="flex gap-3 text-sm leading-5 text-[#363933]">
-                    <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#e8ff94] text-[10px] font-bold text-[#2e3800]">
+                  <li key={step} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
+                    <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#29ED9B] text-[10px] font-bold text-[#062417]">
                       {index + 1}
                     </span>
                     {step}
@@ -172,13 +172,13 @@ function RuleCard({ rule }: { rule: MarketRule }) {
             </div>
           </div>
 
-          <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-[#e4e5df] pt-5 text-xs text-[#6b6f66]">
+          <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-[#9BF3CF] pt-5 text-xs text-[#0C472F]/70">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <span>{rule.status === "in_force" ? "In force" : "Coming"}</span>
               {rule.key_date ? <span>Key date: {formatDate(rule.key_date)}</span> : null}
               <span>Checked {formatDate(rule.checked_at)}</span>
               {rule.check ? (
-                <span className="rounded-full bg-[#fff0d8] px-2 py-1 font-semibold text-[#8a5600]">
+                <span className="rounded-full bg-white px-2 py-1 font-semibold text-[#0C472F]">
                   Secondary source — re-check
                 </span>
               ) : null}
@@ -190,7 +190,7 @@ function RuleCard({ rule }: { rule: MarketRule }) {
                   href={source.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 font-semibold text-[#31352e] underline decoration-[#b7b9b1] underline-offset-4 hover:decoration-[#31352e]"
+                  className="inline-flex items-center gap-1.5 font-semibold text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
                 >
                   {source.label}
                   <ArrowUpRightIcon className="size-3.5" />
@@ -264,11 +264,11 @@ export function MarketRulesDashboard({
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f3ef] text-[#171916]">
-      <header className="sticky top-0 z-30 border-b border-[#deded8] bg-[#f4f3ef]/95 backdrop-blur lg:hidden">
+    <div className="min-h-screen bg-white text-[#062417]">
+      <header className="sticky top-0 z-30 border-b border-[#CDFDE9] bg-white/95 backdrop-blur lg:hidden">
         <div className="flex h-16 items-center justify-between px-5">
           <a href="#top" className="flex items-center gap-2.5 font-semibold tracking-[-0.02em]">
-            <span className="grid size-8 place-items-center rounded-full bg-[#171916] text-[#d7fd58]">
+            <span className="grid size-8 place-items-center rounded-full bg-[#062417] text-[#29ED9B]">
               <RadarIcon className="size-[18px]" />
             </span>
             NL market entry
@@ -277,15 +277,15 @@ export function MarketRulesDashboard({
             type="button"
             aria-label="Toggle navigation"
             aria-expanded={mobileNavigationOpen}
-            className="grid size-10 place-items-center rounded-full border border-[#d5d5ce] bg-white"
+            className="grid size-10 place-items-center rounded-full border border-[#9BF3CF] bg-white"
             onClick={() => setMobileNavigationOpen((current) => !current)}
           >
             <MenuIcon className="size-5" />
           </button>
         </div>
         {mobileNavigationOpen ? (
-          <nav className="border-t border-[#deded8] bg-white px-5 py-4 text-sm">
-            <a href="#rules" className="flex items-center gap-3 rounded-xl bg-[#eefbba] px-4 py-3 font-semibold">
+          <nav className="border-t border-[#CDFDE9] bg-white px-5 py-4 text-sm">
+            <a href="#rules" className="flex items-center gap-3 rounded-xl bg-[#CDFDE9] px-4 py-3 font-semibold">
               <RadarIcon className="size-5" />
               Market rules radar
             </a>
@@ -293,33 +293,33 @@ export function MarketRulesDashboard({
         ) : null}
       </header>
 
-      <aside className="fixed inset-y-0 left-0 hidden w-[264px] flex-col border-r border-[#deded8] bg-[#ecebe5] px-5 py-6 lg:flex">
+      <aside className="palette-wash-sidebar fixed inset-y-0 left-0 hidden w-[264px] flex-col border-r border-[#CDFDE9] px-5 py-6 lg:flex">
         <a href="#top" className="flex items-center gap-3 px-2">
-          <span className="grid size-9 place-items-center rounded-full bg-[#171916] text-[#d7fd58]">
+          <span className="grid size-9 place-items-center rounded-full bg-[#062417] text-[#29ED9B]">
             <RadarIcon className="size-5" />
           </span>
           <span>
             <span className="block text-sm font-bold tracking-[-0.015em]">Netherlands GTM</span>
-            <span className="block text-xs text-[#777b71]">trawa market entry</span>
+            <span className="block text-xs text-[#0C472F]/70">trawa market entry</span>
           </span>
         </a>
 
-        <div className="mt-12 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#898c83]">
+        <div className="mt-12 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#2AA370]">
           Environmental radar
         </div>
         <nav className="mt-3">
-          <a href="#rules" className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow-[0_1px_0_rgba(23,25,22,0.05)]">
+          <a href="#rules" className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow-[0_10px_28px_rgba(12,71,47,0.10)]">
             <RadarIcon className="size-5" />
             Market rules
-            <span className="ml-auto rounded-full bg-[#d7fd58] px-2 py-0.5 text-[10px] font-bold">
+            <span className="ml-auto rounded-full bg-[#29ED9B] px-2 py-0.5 text-[10px] font-bold">
               {rules.length}
             </span>
           </a>
         </nav>
 
-        <div className="mt-auto rounded-2xl border border-[#d7d7d0] bg-[#f5f4ef] p-4">
+        <div className="mt-auto rounded-2xl border border-[#9BF3CF] bg-white/80 p-4 backdrop-blur">
           <p className="text-xs font-semibold">Scope</p>
-          <p className="mt-1.5 text-xs leading-5 text-[#73776e]">
+          <p className="mt-1.5 text-xs leading-5 text-[#0C472F]/70">
             B2B only · SME + mid-market
             <br />
             Power + gas · Netherlands
@@ -328,53 +328,53 @@ export function MarketRulesDashboard({
       </aside>
 
       <main id="top" className="lg:pl-[264px]">
-        <div className="mx-auto max-w-[1440px] px-5 pb-20 pt-10 sm:px-8 sm:pt-14 lg:px-12 xl:px-16">
-          <section className="grid items-end gap-8 border-b border-[#cecec7] pb-10 lg:grid-cols-[1fr_auto] lg:gap-12">
+        <div className="mx-auto max-w-[1440px] px-5 pb-20 pt-6 sm:px-8 sm:pt-8 lg:px-12 xl:px-16">
+          <section className="palette-wash green-panel-shadow grid items-end gap-8 overflow-hidden rounded-[32px] p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:gap-12 lg:p-12">
             <div>
-              <div className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#6d7168]">
-                <span className="size-2 rounded-full bg-[#9cb900]" />
+              <div className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#0C472F]">
+                <span className="size-2 rounded-full bg-[#29ED9B] ring-4 ring-white/50" />
                 Environmental radar · Module 1
               </div>
               <h1 className="max-w-4xl text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] sm:text-[58px] lg:text-[68px]">
                 NL Market Rules Radar
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-[#666a61] sm:text-lg">
-                Dutch energy-market rules, mapped to the process each one forces trawa to build. Red means trawa must comply. Green means a client rule trawa can sell into.
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[#0C472F]/80 sm:text-lg">
+                Dutch energy-market rules, mapped to the process each one forces trawa to build. Dark green means trawa must comply. Bright green means a client rule trawa can sell into.
               </p>
-              <p className="mt-4 text-xs font-medium text-[#85887f]">
+              <p className="mt-4 text-xs font-medium text-[#0C472F]/65">
                 {isMockData
                   ? "Temporary mock data · awaiting backend integration"
                   : "Curated by hand · source dates shown per rule"}
               </p>
             </div>
 
-            <dl className="grid grid-cols-3 overflow-hidden rounded-2xl border border-[#d5d5cf] bg-white lg:w-[380px]">
-              <div className="border-r border-[#e1e1dc] p-4 sm:p-5">
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#85887f]">Rules</dt>
+            <dl className="grid grid-cols-3 overflow-hidden rounded-2xl border border-white/70 bg-white/90 shadow-[0_14px_38px_rgba(12,71,47,0.10)] backdrop-blur lg:w-[380px]">
+              <div className="border-r border-[#CDFDE9] p-4 sm:p-5">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2AA370]">Rules</dt>
                 <dd className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{rules.length}</dd>
               </div>
-              <div className="border-r border-[#e1e1dc] p-4 sm:p-5">
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#85887f]">High</dt>
+              <div className="border-r border-[#CDFDE9] p-4 sm:p-5">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2AA370]">High</dt>
                 <dd className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{highImpactCount}</dd>
               </div>
               <div className="p-4 sm:p-5">
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#85887f]">Coming</dt>
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2AA370]">Coming</dt>
                 <dd className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{comingCount}</dd>
               </div>
             </dl>
           </section>
 
-          <section className="grid gap-8 border-b border-[#cecec7] py-8 xl:grid-cols-[0.8fr_1.6fr]">
+          <section className="palette-wash-soft mt-6 grid gap-8 rounded-[28px] border border-[#CDFDE9] p-6 sm:p-8 xl:grid-cols-[0.8fr_1.6fr]">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#6d7168]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2AA370]">
                 Assumptions to confirm
               </p>
-              <ul className="mt-4 space-y-2.5 text-sm leading-6 text-[#555950]">
-                <li className="flex gap-3"><span className="text-[#9cb900]">•</span>B2B only: SMEs and mid-market. No households.</li>
-                <li className="flex gap-3"><span className="text-[#9cb900]">•</span>Electricity and gas both in scope.</li>
-                <li className="flex gap-3"><span className="text-[#9cb900]">•</span>Regulation first. Grid congestion and pricing come later.</li>
+              <ul className="mt-4 space-y-2.5 text-sm leading-6 text-[#0C472F]/80">
+                <li className="flex gap-3"><span className="text-[#29ED9B]">•</span>B2B only: SMEs and mid-market. No households.</li>
+                <li className="flex gap-3"><span className="text-[#29ED9B]">•</span>Electricity and gas both in scope.</li>
+                <li className="flex gap-3"><span className="text-[#29ED9B]">•</span>Regulation first. Grid congestion and pricing come later.</li>
                 <li className="flex gap-3">
-                  <span className="text-[#9cb900]">•</span>
+                  <span className="text-[#29ED9B]">•</span>
                   {isMockData
                     ? "Mock records are for UI testing only. Backend content is pending."
                     : "Not legal advice. “Check” means a secondary source is used."}
@@ -383,7 +383,7 @@ export function MarketRulesDashboard({
             </div>
 
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#6d7168]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2AA370]">
                 Processes trawa needs in NL
               </p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -391,7 +391,7 @@ export function MarketRulesDashboard({
                   <button
                     key={summary.name}
                     type="button"
-                    className="rounded-2xl border border-[#d8d9d2] bg-white p-4 text-left transition hover:border-[#aeb1a7] hover:bg-[#fcfcf8]"
+                    className="rounded-2xl border border-white/80 bg-white/90 p-4 text-left shadow-[0_8px_22px_rgba(12,71,47,0.06)] transition hover:-translate-y-0.5 hover:border-[#6EEEBA] hover:bg-white hover:shadow-[0_12px_28px_rgba(12,71,47,0.11)]"
                     onClick={() => {
                       setProcess(summary.name);
                       document.querySelector("#rules")?.scrollIntoView({ behavior: "smooth" });
@@ -400,10 +400,10 @@ export function MarketRulesDashboard({
                     <span className="block text-sm font-semibold tracking-[-0.01em]">
                       {processLabels[summary.name]}
                     </span>
-                    <span className="mt-1 block text-xs text-[#7b7f76]">
+                    <span className="mt-1 block text-xs text-[#0C472F]/65">
                       {processQuestions[summary.name]}
                     </span>
-                    <span className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#7b7f76]">
+                    <span className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#2AA370]">
                       <span>{summary.count} {summary.count === 1 ? "rule" : "rules"}</span>
                       <span>{summary.highCount} high</span>
                       <span>next: {summary.nextDate ? formatDate(summary.nextDate) : "—"}</span>
@@ -414,27 +414,27 @@ export function MarketRulesDashboard({
             </div>
           </section>
 
-          <section id="rules" className="pt-8">
+          <section id="rules" className="palette-wash mt-6 scroll-mt-20 rounded-[32px] p-5 sm:p-8">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold tracking-[-0.025em]">Rules radar</h2>
-                <p aria-live="polite" className="mt-1 text-sm text-[#777b71]">
+                <p aria-live="polite" className="mt-1 text-sm text-[#0C472F]/70">
                   Showing {filteredRules.length} of {rules.length} rules
                 </p>
               </div>
-              <SlidersIcon className="size-5 text-[#777b71] sm:hidden" />
+              <SlidersIcon className="size-5 text-[#0C472F] sm:hidden" />
             </div>
 
             <div className="mb-6 flex flex-col gap-3 xl:flex-row">
               <label className="relative min-w-0 flex-1">
                 <span className="sr-only">Search rules</span>
-                <SearchIcon className="absolute left-4 top-3 size-5 text-[#777b71]" />
+                <SearchIcon className="absolute left-4 top-3 size-5 text-[#2AA370]" />
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search rules, requirements or steps"
-                  className="h-11 w-full rounded-full border border-[#d4d4ce] bg-white pl-11 pr-4 text-sm outline-none transition placeholder:text-[#969990] hover:border-[#95988e] focus:border-[#171916] focus:ring-2 focus:ring-[#d7fd58]"
+                  className="h-11 w-full rounded-full border border-[#9BF3CF] bg-white pl-11 pr-4 text-sm outline-none transition placeholder:text-[#2AA370]/60 hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]"
                 />
               </label>
               <div className="flex flex-wrap gap-3">
@@ -472,18 +472,18 @@ export function MarketRulesDashboard({
                 ))}
               </div>
             ) : (
-              <div className="grid min-h-[300px] place-items-center rounded-[22px] border border-dashed border-[#c9cac3] bg-[#eeede8] px-6 text-center">
+              <div className="grid min-h-[300px] place-items-center rounded-[22px] border border-dashed border-[#6EEEBA] bg-white/75 px-6 text-center">
                 <div>
-                  <span className="mx-auto grid size-12 place-items-center rounded-full border border-[#d4d5ce] bg-white text-[#62665d]">
+                  <span className="mx-auto grid size-12 place-items-center rounded-full border border-[#9BF3CF] bg-white text-[#0C472F]">
                     <SearchIcon className="size-5" />
                   </span>
                   <h3 className="mt-4 text-lg font-semibold">No matching rules</h3>
-                  <p className="mt-1 text-sm text-[#777b71]">
+                  <p className="mt-1 text-sm text-[#0C472F]/70">
                     Change or clear the filters to see the full radar.
                   </p>
                   <button
                     type="button"
-                    className="mt-5 rounded-full bg-[#171916] px-4 py-2 text-xs font-semibold text-white"
+                    className="mt-5 rounded-full bg-[#062417] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#0C472F] focus:outline-none focus:ring-2 focus:ring-[#29ED9B] focus:ring-offset-2"
                     onClick={clearFilters}
                   >
                     Clear filters
