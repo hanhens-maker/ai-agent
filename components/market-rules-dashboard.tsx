@@ -217,7 +217,11 @@ export function MarketRulesDashboard({
   const attentionRules = useMemo(
     () =>
       [...rules]
-        .filter((rule) => rule.impact === "high" || rule.status === "coming")
+        .filter(
+          (rule) =>
+            rule.kind === "must" &&
+            (rule.impact === "high" || rule.status === "coming"),
+        )
         .sort((first, second) => {
           if (first.impact === "high" && second.impact !== "high") return -1;
           if (first.impact !== "high" && second.impact === "high") return 1;
@@ -263,10 +267,12 @@ export function MarketRulesDashboard({
   function showRule(rule: MarketRule) {
     clearFilters();
     setExpandedRule(rule.id);
-    window.setTimeout(() => {
-      document.querySelector(`[data-rule-id="${rule.id}"]`)?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        document.querySelector(`[data-rule-id="${rule.id}"]`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       });
     });
   }
