@@ -95,7 +95,7 @@ function ComplianceHealth({
       className="rounded-[28px] bg-white p-5 shadow-[0_12px_32px_rgba(23,25,22,0.05)] sm:p-7 lg:p-8"
     >
       <div className="mb-6 flex items-center gap-2.5 sm:mb-8 sm:gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#eef1f3] text-[#252a2f] sm:size-12">
+        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#E4FCF2] text-[#0C472F] sm:size-12">
           <WarningTriangleIcon className="size-5" />
         </span>
         <h2
