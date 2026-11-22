@@ -11,14 +11,19 @@ import type {
 import { marketRuleProcesses } from "@/lib/data/market-rules";
 import {
   ArrowUpRightIcon,
+  BellIcon,
+  BoltIcon,
+  CheckIcon,
+  ChecklistIcon,
   ChevronDownIcon,
   ClockIcon,
+  CloseIcon,
+  HomeIcon,
+  LayersIcon,
   MenuIcon,
-  RadarIcon,
   SearchIcon,
-  SlidersIcon,
+  ShieldIcon,
   SparkIcon,
-  WarningTriangleIcon,
 } from "@/components/icons";
 
 type FilterValue<T extends string> = "all" | T;
@@ -45,26 +50,10 @@ const processQuestions: Record<MarketRuleProcess, string> = {
   sales: "Which client rule opens a deal?",
 };
 
-const healthCategoryLabels: Record<MarketRuleProcess, string> = {
-  licence: "Licence",
-  risk: "Risk & procurement",
-  balancing: "Balancing",
-  data: "Market data",
-  billing: "Billing & tax",
-  customer: "Customer",
-  reporting: "Reporting",
-  sales: "Sales",
-};
-
-const impactStyles: Record<MarketRuleImpact, string> = {
-  high: "border-[#062417] bg-[#062417] text-white",
-  medium: "border-[#29ED9B] bg-[#CDFDE9] text-[#0C472F]",
-  low: "border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F]",
-};
-
-const kindStyles: Record<MarketRuleKind, string> = {
-  must: "bg-[#0C472F] text-white",
-  opp: "bg-[#29ED9B] text-[#062417]",
+const impactLabels: Record<MarketRuleImpact, string> = {
+  high: "High impact",
+  medium: "Medium impact",
+  low: "Low impact",
 };
 
 function formatDate(date: string) {
@@ -73,84 +62,6 @@ function formatDate(date: string) {
     month: "short",
     year: "numeric",
   }).format(new Date(`${date}T00:00:00`));
-}
-
-function formatDeadline(date: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-  }).format(new Date(`${date}T00:00:00`));
-}
-
-function ComplianceHealth({
-  rules,
-  onViewRule,
-}: {
-  rules: MarketRule[];
-  onViewRule: (ruleId: string) => void;
-}) {
-  return (
-    <section
-      aria-labelledby="compliance-health-title"
-      className="rounded-[28px] bg-white p-5 shadow-[0_12px_32px_rgba(23,25,22,0.05)] sm:p-7 lg:p-8"
-    >
-      <div className="mb-6 flex items-center gap-2.5 sm:mb-8 sm:gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#E4FCF2] text-[#0C472F] sm:size-12">
-          <WarningTriangleIcon className="size-5" />
-        </span>
-        <h2
-          id="compliance-health-title"
-          className="text-[22px] font-semibold tracking-[-0.035em] sm:text-[30px]"
-        >
-          Compliance health
-        </h2>
-        <span className="whitespace-nowrap text-xs text-[#8a9299] sm:text-base">
-          {rules.length} to look at
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {rules.map((rule) => (
-          <article
-            key={rule.id}
-            className="flex min-h-[210px] min-w-0 flex-col rounded-[22px] bg-[#f1f3f4] p-5 sm:p-6"
-          >
-            <div className="flex min-w-0 items-start justify-between gap-3">
-              <span className="pt-1 text-xs font-medium text-[#89929a] sm:text-sm">
-                {healthCategoryLabels[rule.process]}
-              </span>
-              {rule.key_date ? (
-                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border-2 border-[#cfd5da] px-3 py-1.5 text-xs font-medium text-[#515960] sm:text-sm">
-                  <ClockIcon className="size-3.5 text-[#87919a]" />
-                  by {formatDeadline(rule.key_date)}
-                </span>
-              ) : null}
-            </div>
-
-            <p
-              className="mt-8 overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium tracking-[-0.015em] text-[#1e2225] sm:text-lg"
-              title={`${rule.title} · ${rule.steps[0] ?? rule.impact_text}`}
-            >
-              {rule.title} · {rule.steps[0] ?? rule.impact_text}
-            </p>
-
-            <div className="mt-auto flex items-end justify-between gap-3 pt-8">
-              <span className="text-xs font-medium text-[#89929a] sm:text-sm">
-                {rule.status === "in_force" ? "In force" : "Coming"}
-              </span>
-              <button
-                type="button"
-                className="shrink-0 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-[#1e2225] shadow-[0_8px_18px_rgba(23,25,22,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(23,25,22,0.12)] focus:outline-none focus:ring-2 focus:ring-[#a8c800] focus:ring-offset-2 focus:ring-offset-[#f1f3f4]"
-                onClick={() => onViewRule(rule.id)}
-              >
-                View rule
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 function SelectFilter<T extends string>({
@@ -165,10 +76,10 @@ function SelectFilter<T extends string>({
   options: readonly { value: T; label: string }[];
 }) {
   return (
-    <label className="relative min-w-[148px] flex-1 sm:flex-none">
+    <label className="relative min-w-40 flex-1 sm:flex-none">
       <span className="sr-only">{label}</span>
       <select
-        className="h-11 w-full appearance-none rounded-full border border-[#9BF3CF] bg-white pl-4 pr-10 text-sm font-medium text-[#062417] outline-none transition hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA] sm:w-auto"
+        className="h-10 w-full appearance-none rounded-xl border border-[#d7dce2] bg-white pl-3 pr-9 text-sm font-medium text-[#20252b] outline-none transition hover:border-[#9aa3ad] focus:border-[#20252b] focus:ring-2 focus:ring-[#20252b]/10"
         value={value}
         onChange={(event) => onChange(event.target.value as FilterValue<T>)}
       >
@@ -179,128 +90,93 @@ function SelectFilter<T extends string>({
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="pointer-events-none absolute right-3.5 top-3.5 size-4 text-[#0C472F]" />
+      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#6d7580]" />
     </label>
   );
 }
 
-function RuleCard({
-  rule,
-  expanded,
-  onToggle,
-}: {
-  rule: MarketRule;
-  expanded: boolean;
-  onToggle: () => void;
-}) {
+function StatusPill({ status }: { status: MarketRuleStatus }) {
+  const isInForce = status === "in_force";
+
   return (
-    <article
-      id={`rule-${rule.id}`}
-      className="scroll-mt-24 overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_10px_30px_rgba(12,71,47,0.08)] transition hover:-translate-y-0.5 hover:border-[#6EEEBA] hover:shadow-[0_14px_36px_rgba(12,71,47,0.13)]"
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e9ebee] px-2.5 py-1 text-xs font-medium text-[#20252b]">
+      {isInForce ? <CheckIcon className="size-3.5" /> : <ClockIcon className="size-3.5" />}
+      {isInForce ? "In force" : "Coming"}
+    </span>
+  );
+}
+
+function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
+  return (
+    <span
+      className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+        impact === "high"
+          ? "border-[#20252b] bg-[#20252b] text-white"
+          : impact === "medium"
+            ? "border-[#b7bec6] bg-[#f1f2f4] text-[#20252b]"
+            : "border-[#d7dce2] bg-white text-[#59616b]"
+      }`}
     >
-      <button
-        type="button"
-        aria-expanded={expanded}
-        className="grid w-full grid-cols-[auto_1fr_auto] gap-x-3 gap-y-3 p-5 text-left sm:gap-x-5 sm:p-6"
-        onClick={onToggle}
-      >
-        <span className="pt-0.5 font-mono text-xs font-semibold tracking-[0.08em] text-[#2AA370]">
-          {rule.id}
-        </span>
-        <span className="min-w-0">
-          <span className="mb-2 flex flex-wrap items-center gap-2">
-            <span
-              className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.09em] ${kindStyles[rule.kind]}`}
-            >
-              {rule.kind === "must" ? "Must comply" : "Sales opportunity"}
+      {impactLabels[impact]}
+    </span>
+  );
+}
+
+function RuleDetails({ rule }: { rule: MarketRule }) {
+  return (
+    <div className="grid gap-6 border-t border-[#d7dce2] bg-[#f7f8f9] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
+      <div>
+        <p className="market-kicker">What the rule says</p>
+        <p className="mt-2 text-sm leading-6 text-[#454c55]">{rule.rule_text}</p>
+
+        <p className="market-kicker mt-5">What this means for trawa</p>
+        <p className="mt-2 text-sm leading-6 text-[#454c55]">{rule.impact_text}</p>
+
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#6d7580]">
+          <span>Checked {formatDate(rule.checked_at)}</span>
+          {rule.check ? (
+            <span className="rounded-full border border-[#c8cdd3] bg-white px-2 py-1 font-medium text-[#454c55]">
+              Secondary source — re-check
             </span>
-            <span className="text-xs font-medium capitalize text-[#2AA370]">
-              {processLabels[rule.process]}
-            </span>
-          </span>
-          <span className="block text-[20px] font-semibold leading-[1.2] tracking-[-0.025em] text-[#062417] sm:text-[22px]">
-            {rule.title}
-          </span>
-          <span className="mt-2.5 line-clamp-2 block max-w-3xl text-sm leading-6 text-[#0C472F]/75">
-            {rule.impact_text}
-          </span>
-        </span>
-        <span className="flex flex-col items-end gap-3">
-          <span
-            className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.09em] ${impactStyles[rule.impact]}`}
-          >
-            {rule.impact}
-          </span>
-          <span
-            className={`grid size-8 place-items-center rounded-full border border-[#9BF3CF] text-[#0C472F] transition ${expanded ? "rotate-180 bg-[#CDFDE9]" : "bg-white"}`}
-          >
-            <ChevronDownIcon className="size-4" />
-          </span>
-        </span>
-      </button>
+          ) : null}
+        </div>
+      </div>
 
-      {expanded ? (
-        <div className="border-t border-[#CDFDE9] bg-[#E4FCF2] px-5 py-6 sm:px-[74px] sm:py-7">
-          <div className="grid gap-7 lg:grid-cols-[1.25fr_0.9fr] lg:gap-12">
-            <div>
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.13em] text-[#2AA370]">
-                What the rule says
-              </p>
-              <p className="text-sm leading-6 text-[#0C472F]">{rule.rule_text}</p>
+      <div className="rounded-xl border border-[#d7dce2] bg-white p-4">
+        <p className="market-kicker flex items-center gap-2">
+          <SparkIcon className="size-4" />
+          Suggested process steps
+        </p>
+        <ol className="mt-3 space-y-3">
+          {rule.steps.map((step, index) => (
+            <li key={step} className="flex gap-3 text-sm leading-5 text-[#454c55]">
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#20252b] text-[11px] font-semibold text-white">
+                {index + 1}
+              </span>
+              {step}
+            </li>
+          ))}
+        </ol>
 
-              <p className="mb-2 mt-6 text-[11px] font-bold uppercase tracking-[0.13em] text-[#2AA370]">
-                What this means for trawa
-              </p>
-              <p className="text-sm leading-6 text-[#0C472F]">{rule.impact_text}</p>
-            </div>
-
-            <div className="rounded-2xl border border-[#9BF3CF] bg-white p-5">
-              <p className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.13em] text-[#2AA370]">
-                <SparkIcon className="size-4 text-[#29ED9B]" />
-                Suggested process steps
-              </p>
-              <ol className="space-y-3">
-                {rule.steps.map((step, index) => (
-                  <li key={step} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
-                    <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#29ED9B] text-[10px] font-bold text-[#062417]">
-                      {index + 1}
-                    </span>
-                    {step}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-
-          <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-[#9BF3CF] pt-5 text-xs text-[#0C472F]/70">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span>{rule.status === "in_force" ? "In force" : "Coming"}</span>
-              {rule.key_date ? <span>Key date: {formatDate(rule.key_date)}</span> : null}
-              <span>Checked {formatDate(rule.checked_at)}</span>
-              {rule.check ? (
-                <span className="rounded-full bg-white px-2 py-1 font-semibold text-[#0C472F]">
-                  Secondary source — re-check
-                </span>
-              ) : null}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {rule.sources.map((source) => (
-                <a
-                  key={source.url}
-                  href={source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 font-semibold text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
-                >
-                  {source.label}
-                  <ArrowUpRightIcon className="size-3.5" />
-                </a>
-              ))}
-            </div>
+        <div className="mt-5 border-t border-[#e3e6e9] pt-4">
+          <p className="market-kicker">Evidence / sources</p>
+          <div className="mt-2 flex flex-col items-start gap-2">
+            {rule.sources.map((source) => (
+              <a
+                key={source.url}
+                href={source.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#20252b] underline decoration-[#aab0b8] underline-offset-4 hover:decoration-[#20252b]"
+              >
+                {source.label}
+                <ArrowUpRightIcon className="size-3.5" />
+              </a>
+            ))}
           </div>
         </div>
-      ) : null}
-    </article>
+      </div>
+    </div>
   );
 }
 
@@ -315,21 +191,8 @@ export function MarketRulesDashboard({
   const [process, setProcess] = useState<FilterValue<MarketRuleProcess>>("all");
   const [kind, setKind] = useState<FilterValue<MarketRuleKind>>("all");
   const [status, setStatus] = useState<FilterValue<MarketRuleStatus>>("all");
+  const [expandedRule, setExpandedRule] = useState<string | null>(null);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
-  const [expandedRuleId, setExpandedRuleId] = useState<string | null>(null);
-
-  const complianceRules = useMemo(
-    () =>
-      rules
-        .filter((rule) => rule.kind === "must")
-        .sort((first, second) => {
-          if (!first.key_date && !second.key_date) return 0;
-          if (!first.key_date) return 1;
-          if (!second.key_date) return -1;
-          return first.key_date.localeCompare(second.key_date);
-        }),
-    [rules],
-  );
 
   const filteredRules = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -351,24 +214,48 @@ export function MarketRulesDashboard({
     });
   }, [kind, process, rules, search, status]);
 
-  const highImpactCount = rules.filter((rule) => rule.impact === "high").length;
-  const comingCount = rules.filter((rule) => rule.status === "coming").length;
+  const attentionRules = useMemo(
+    () =>
+      [...rules]
+        .filter(
+          (rule) =>
+            rule.kind === "must" &&
+            (rule.impact === "high" || rule.status === "coming"),
+        )
+        .sort((first, second) => {
+          if (first.impact === "high" && second.impact !== "high") return -1;
+          if (first.impact !== "high" && second.impact === "high") return 1;
+          return (first.key_date ?? "9999").localeCompare(second.key_date ?? "9999");
+        }),
+    [rules],
+  );
 
-  const processSummaries = marketRuleProcesses.map((processName) => {
-    const processRules = rules.filter((rule) => rule.process === processName);
-    const nextRule = processRules
-      .filter((rule) => rule.key_date && rule.key_date >= "2026-11-21")
-      .sort((first, second) =>
-        (first.key_date ?? "").localeCompare(second.key_date ?? ""),
-      )[0];
+  const prerequisiteRules = useMemo(
+    () =>
+      rules
+        .filter((rule) => ["licence", "balancing", "data", "billing"].includes(rule.process))
+        .slice(0, 5),
+    [rules],
+  );
 
-    return {
-      name: processName,
-      count: processRules.length,
-      highCount: processRules.filter((rule) => rule.impact === "high").length,
-      nextDate: nextRule?.key_date ?? null,
-    };
-  });
+  const processSummaries = useMemo(
+    () =>
+      marketRuleProcesses.map((processName) => {
+        const processRules = rules.filter((rule) => rule.process === processName);
+        const nextDate = processRules
+          .map((rule) => rule.key_date)
+          .filter((date): date is string => Boolean(date))
+          .sort()[0];
+
+        return {
+          name: processName,
+          count: processRules.length,
+          highCount: processRules.filter((rule) => rule.impact === "high").length,
+          nextDate,
+        };
+      }),
+    [rules],
+  );
 
   function clearFilters() {
     setSearch("");
@@ -377,196 +264,211 @@ export function MarketRulesDashboard({
     setStatus("all");
   }
 
-  function viewRule(ruleId: string) {
+  function showRule(rule: MarketRule) {
     clearFilters();
-    setExpandedRuleId(ruleId);
-
+    setExpandedRule(rule.id);
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        document
-          .getElementById(`rule-${ruleId}`)
-          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.querySelector(`[data-rule-id="${rule.id}"]`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       });
     });
   }
 
   return (
-    <div className="min-h-screen bg-white text-[#062417]">
-      <header className="sticky top-0 z-30 border-b border-[#CDFDE9] bg-white/95 backdrop-blur lg:hidden">
-        <div className="flex h-16 items-center justify-between px-5">
-          <a href="#top" className="flex items-center gap-2.5 font-semibold tracking-[-0.02em]">
-            <span className="grid size-8 place-items-center rounded-full bg-[#062417] text-[#29ED9B]">
-              <RadarIcon className="size-[18px]" />
+    <div className="min-h-screen bg-[#f4f5f6] text-[#20252b]">
+      <header className="sticky top-0 z-40 border-b border-[#d7dce2] bg-white/95 backdrop-blur lg:hidden">
+        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+          <a href="#top" className="flex items-center gap-3 font-semibold tracking-[-0.02em]">
+            <span className="grid size-9 place-items-center rounded-xl bg-[#eef0f2]">
+              <BoltIcon className="size-5" />
             </span>
-            NL market entry
+            Netherlands GTM Dashboard
           </a>
           <button
             type="button"
-            aria-label="Toggle navigation"
+            aria-label={mobileNavigationOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={mobileNavigationOpen}
-            className="grid size-10 place-items-center rounded-full border border-[#9BF3CF] bg-white"
+            className="grid size-10 place-items-center rounded-xl border border-[#d7dce2] bg-white"
             onClick={() => setMobileNavigationOpen((current) => !current)}
           >
-            <MenuIcon className="size-5" />
+            {mobileNavigationOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
           </button>
         </div>
         {mobileNavigationOpen ? (
-          <nav className="border-t border-[#CDFDE9] bg-white px-5 py-4 text-sm">
-            <a href="#rules" className="flex items-center gap-3 rounded-xl bg-[#CDFDE9] px-4 py-3 font-semibold">
-              <RadarIcon className="size-5" />
-              Market rules radar
+          <nav className="grid gap-1 border-t border-[#e3e6e9] bg-white p-3 text-sm">
+            <a href="#top" className="market-nav-link market-nav-link-active" onClick={() => setMobileNavigationOpen(false)}>
+              <HomeIcon className="size-5" /> Overview
+            </a>
+            <a href="#rules" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
+              <ShieldIcon className="size-5" /> Compliance
+            </a>
+            <a href="#prerequisites" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
+              <ChecklistIcon className="size-5" /> Prerequisites
+            </a>
+            <a href="#processes" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
+              <LayersIcon className="size-5" /> Process coverage
             </a>
           </nav>
         ) : null}
       </header>
 
-      <aside className="palette-wash-sidebar fixed inset-y-0 left-0 hidden w-[264px] flex-col border-r border-[#CDFDE9] px-5 py-6 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#d7dce2] bg-[#f7f8f9] px-3 py-7 lg:flex">
         <a href="#top" className="flex items-center gap-3 px-2">
-          <span className="grid size-9 place-items-center rounded-full bg-[#062417] text-[#29ED9B]">
-            <RadarIcon className="size-5" />
+          <span className="grid size-11 place-items-center rounded-xl bg-[#e9ebee]">
+            <BoltIcon className="size-6" />
           </span>
-          <span>
-            <span className="block text-sm font-bold tracking-[-0.015em]">Netherlands GTM</span>
-            <span className="block text-xs text-[#0C472F]/70">trawa market entry</span>
+          <span className="text-[17px] font-semibold leading-5 tracking-[-0.025em]">
+            Netherlands
+            <span className="block">GTM Dashboard</span>
           </span>
         </a>
 
-        <div className="mt-12 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#2AA370]">
-          Environmental radar
-        </div>
-        <nav className="mt-3">
-          <a href="#rules" className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold shadow-[0_10px_28px_rgba(12,71,47,0.10)]">
-            <RadarIcon className="size-5" />
-            Market rules
-            <span className="ml-auto rounded-full bg-[#29ED9B] px-2 py-0.5 text-[10px] font-bold">
-              {rules.length}
-            </span>
+        <nav className="mt-10 grid gap-1 text-[15px]">
+          <a href="#top" className="market-nav-link market-nav-link-active">
+            <HomeIcon className="size-5" /> Overview
+          </a>
+          <a href="#rules" className="market-nav-link">
+            <ShieldIcon className="size-5" /> Compliance
+          </a>
+          <a href="#prerequisites" className="market-nav-link">
+            <ChecklistIcon className="size-5" /> Prerequisites
+          </a>
+          <a href="#processes" className="market-nav-link">
+            <LayersIcon className="size-5" /> Process coverage
           </a>
         </nav>
 
-        <div className="mt-auto rounded-2xl border border-[#9BF3CF] bg-white/80 p-4 backdrop-blur">
-          <p className="text-xs font-semibold">Scope</p>
-          <p className="mt-1.5 text-xs leading-5 text-[#0C472F]/70">
-            B2B only · SME + mid-market
+        <div className="mt-auto rounded-xl border border-[#d7dce2] bg-white p-4">
+          <p className="text-sm font-semibold">Market scope</p>
+          <p className="mt-1.5 text-xs leading-5 text-[#6d7580]">
+            B2B · SME + mid-market
             <br />
             Power + gas · Netherlands
           </p>
         </div>
       </aside>
 
-      <main id="top" className="lg:pl-[264px]">
-        <div className="mx-auto max-w-[1440px] px-5 pb-20 pt-6 sm:px-8 sm:pt-8 lg:px-12 xl:px-16">
-          <ComplianceHealth rules={complianceRules} onViewRule={viewRule} />
+      <main id="top" className="lg:pl-[250px]">
+        <div className="mx-auto max-w-[1480px] px-4 pb-16 pt-7 sm:px-7 lg:px-8 lg:pt-5 xl:px-9">
+          <header>
+            <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.045em] sm:text-[38px]">
+              Netherlands market &amp; compliance overview
+            </h1>
+            <p className="mt-1 text-base text-[#59616b] sm:text-lg">
+              Energy market entry, supplier setup and regulatory compliance in the Netherlands
+            </p>
+            {isMockData ? (
+              <p className="mt-3 inline-flex rounded-full border border-[#c8cdd3] bg-white px-3 py-1 text-xs font-medium text-[#59616b]">
+                Temporary interface data · verified backend content pending
+              </p>
+            ) : null}
+          </header>
 
-          <section className="palette-wash green-panel-shadow mt-6 grid items-end gap-8 overflow-hidden rounded-[32px] p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:gap-12 lg:p-12">
-            <div>
-              <div className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#0C472F]">
-                <span className="size-2 rounded-full bg-[#29ED9B] ring-4 ring-white/50" />
-                Environmental radar · Module 1
-              </div>
-              <h1 className="max-w-4xl text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] sm:text-[58px] lg:text-[68px]">
-                NL Market Rules Radar
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-[#0C472F]/80 sm:text-lg">
-                Dutch energy-market rules, mapped to the process each one forces trawa to build. Dark green means trawa must comply. Bright green means a client rule trawa can sell into.
-              </p>
-              <p className="mt-4 text-xs font-medium text-[#0C472F]/65">
-                {isMockData
-                  ? "Temporary mock data · awaiting backend integration"
-                  : "Curated by hand · source dates shown per rule"}
-              </p>
+          <section className="market-panel mt-7 overflow-hidden" aria-labelledby="attention-title">
+            <div className="flex flex-wrap items-center gap-3 px-4 py-4 sm:px-5">
+              <span className="grid size-9 place-items-center rounded-xl bg-white shadow-sm ring-1 ring-[#e3e6e9]">
+                <BellIcon className="size-5" />
+              </span>
+              <h2 id="attention-title" className="text-xl font-semibold tracking-[-0.025em]">
+                Needs attention
+              </h2>
+              <span className="text-sm text-[#59616b]">
+                {attentionRules.length} {attentionRules.length === 1 ? "item" : "items"} to review
+              </span>
             </div>
 
-            <dl className="grid grid-cols-3 overflow-hidden rounded-2xl border border-white/70 bg-white/90 shadow-[0_14px_38px_rgba(12,71,47,0.10)] backdrop-blur lg:w-[380px]">
-              <div className="border-r border-[#CDFDE9] p-4 sm:p-5">
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2AA370]">Rules</dt>
-                <dd className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{rules.length}</dd>
-              </div>
-              <div className="border-r border-[#CDFDE9] p-4 sm:p-5">
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2AA370]">High</dt>
-                <dd className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{highImpactCount}</dd>
-              </div>
-              <div className="p-4 sm:p-5">
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2AA370]">Coming</dt>
-                <dd className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{comingCount}</dd>
-              </div>
-            </dl>
-          </section>
-
-          <section className="palette-wash-soft mt-6 grid gap-8 rounded-[28px] border border-[#CDFDE9] p-6 sm:p-8 xl:grid-cols-[0.8fr_1.6fr]">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2AA370]">
-                Assumptions to confirm
-              </p>
-              <ul className="mt-4 space-y-2.5 text-sm leading-6 text-[#0C472F]/80">
-                <li className="flex gap-3"><span className="text-[#29ED9B]">•</span>B2B only: SMEs and mid-market. No households.</li>
-                <li className="flex gap-3"><span className="text-[#29ED9B]">•</span>Electricity and gas both in scope.</li>
-                <li className="flex gap-3"><span className="text-[#29ED9B]">•</span>Regulation first. Grid congestion and pricing come later.</li>
-                <li className="flex gap-3">
-                  <span className="text-[#29ED9B]">•</span>
-                  {isMockData
-                    ? "Mock records are for UI testing only. Backend content is pending."
-                    : "Not legal advice. “Check” means a secondary source is used."}
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2AA370]">
-                Processes trawa needs in NL
-              </p>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {processSummaries.map((summary) => (
-                  <button
-                    key={summary.name}
-                    type="button"
-                    className="rounded-2xl border border-white/80 bg-white/90 p-4 text-left shadow-[0_8px_22px_rgba(12,71,47,0.06)] transition hover:-translate-y-0.5 hover:border-[#6EEEBA] hover:bg-white hover:shadow-[0_12px_28px_rgba(12,71,47,0.11)]"
-                    onClick={() => {
-                      setProcess(summary.name);
-                      document.querySelector("#rules")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                  >
-                    <span className="block text-sm font-semibold tracking-[-0.01em]">
-                      {processLabels[summary.name]}
+            <div className="mx-2 mb-2 overflow-hidden rounded-xl border border-white bg-white/80">
+              {attentionRules.slice(0, 4).map((rule) => (
+                <div
+                  key={rule.id}
+                  className="grid gap-3 border-b border-[#d7dce2] px-3 py-3 last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:items-center"
+                >
+                  <span className="hidden size-10 place-items-center rounded-xl border border-[#c8cdd3] bg-[#f7f8f9] sm:grid">
+                    {rule.status === "coming" ? <ClockIcon className="size-5" /> : <CheckIcon className="size-5" />}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold leading-5">{rule.title}</span>
+                    <span className="mt-0.5 block truncate text-sm text-[#59616b]">
+                      {processLabels[rule.process]} · {rule.impact_text}
                     </span>
-                    <span className="mt-1 block text-xs text-[#0C472F]/65">
-                      {processQuestions[summary.name]}
-                    </span>
-                    <span className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.05em] text-[#2AA370]">
-                      <span>{summary.count} {summary.count === 1 ? "rule" : "rules"}</span>
-                      <span>{summary.highCount} high</span>
-                      <span>next: {summary.nextDate ? formatDate(summary.nextDate) : "—"}</span>
-                    </span>
+                  </span>
+                  <button type="button" className="market-outline-button" onClick={() => showRule(rule)}>
+                    Review details
                   </button>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </section>
 
-          <section id="rules" className="palette-wash mt-6 scroll-mt-20 rounded-[32px] p-5 sm:p-8">
-            <div className="mb-6 flex items-center justify-between gap-4">
+          <section id="prerequisites" className="mt-8 scroll-mt-20" aria-labelledby="prerequisites-title">
+            <h2 id="prerequisites-title" className="market-section-title">Supplier prerequisites</h2>
+            <div className="market-table-shell mt-3 overflow-x-auto">
+              <table className="w-full min-w-[820px] border-collapse text-left text-sm">
+                <thead>
+                  <tr>
+                    <th>Requirement</th>
+                    <th>Process</th>
+                    <th>Status</th>
+                    <th>Evidence / link</th>
+                    <th>Key date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {prerequisiteRules.map((rule) => (
+                    <tr key={rule.id}>
+                      <td className="font-medium text-[#20252b]">{rule.title}</td>
+                      <td>{processLabels[rule.process]}</td>
+                      <td><StatusPill status={rule.status} /></td>
+                      <td>
+                        <a
+                          href={rule.sources[0]?.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 font-medium underline decoration-[#b7bec6] underline-offset-4 hover:decoration-[#20252b]"
+                        >
+                          {rule.sources[0]?.label ?? "No source"}
+                          <ArrowUpRightIcon className="size-3.5" />
+                        </a>
+                      </td>
+                      <td className="whitespace-nowrap">{rule.key_date ? formatDate(rule.key_date) : "Ongoing"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="rules" className="mt-8 scroll-mt-20" aria-labelledby="rules-title">
+            <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold tracking-[-0.025em]">Rules radar</h2>
-                <p aria-live="polite" className="mt-1 text-sm text-[#0C472F]/70">
+                <h2 id="rules-title" className="market-section-title">Market rules radar</h2>
+                <p aria-live="polite" className="mt-1 text-sm text-[#6d7580]">
                   Showing {filteredRules.length} of {rules.length} rules
                 </p>
               </div>
-              <SlidersIcon className="size-5 text-[#0C472F] sm:hidden" />
+              {(search || process !== "all" || kind !== "all" || status !== "all") ? (
+                <button type="button" className="text-sm font-medium underline underline-offset-4" onClick={clearFilters}>
+                  Clear filters
+                </button>
+              ) : null}
             </div>
 
-            <div className="mb-6 flex flex-col gap-3 xl:flex-row">
+            <div className="mt-3 flex flex-col gap-2 rounded-t-2xl border border-b-0 border-[#c8cdd3] bg-[#eef0f2] p-3 xl:flex-row">
               <label className="relative min-w-0 flex-1">
                 <span className="sr-only">Search rules</span>
-                <SearchIcon className="absolute left-4 top-3 size-5 text-[#2AA370]" />
+                <SearchIcon className="absolute left-3 top-2.5 size-5 text-[#6d7580]" />
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search rules, requirements or steps"
-                  className="h-11 w-full rounded-full border border-[#9BF3CF] bg-white pl-11 pr-4 text-sm outline-none transition placeholder:text-[#2AA370]/60 hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]"
+                  className="h-10 w-full rounded-xl border border-[#d7dce2] bg-white pl-10 pr-3 text-sm outline-none placeholder:text-[#8b929b] focus:border-[#20252b] focus:ring-2 focus:ring-[#20252b]/10"
                 />
               </label>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 <SelectFilter
                   label="Processes"
                   value={process}
@@ -594,41 +496,75 @@ export function MarketRulesDashboard({
               </div>
             </div>
 
-            {filteredRules.length ? (
-              <div className="space-y-3">
-                {filteredRules.map((rule) => (
-                  <RuleCard
-                    key={rule.id}
-                    rule={rule}
-                    expanded={expandedRuleId === rule.id}
-                    onToggle={() =>
-                      setExpandedRuleId((current) =>
-                        current === rule.id ? null : rule.id,
-                      )
-                    }
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="grid min-h-[300px] place-items-center rounded-[22px] border border-dashed border-[#6EEEBA] bg-white/75 px-6 text-center">
-                <div>
-                  <span className="mx-auto grid size-12 place-items-center rounded-full border border-[#9BF3CF] bg-white text-[#0C472F]">
-                    <SearchIcon className="size-5" />
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold">No matching rules</h3>
-                  <p className="mt-1 text-sm text-[#0C472F]/70">
-                    Change or clear the filters to see the full radar.
-                  </p>
-                  <button
-                    type="button"
-                    className="mt-5 rounded-full bg-[#062417] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#0C472F] focus:outline-none focus:ring-2 focus:ring-[#29ED9B] focus:ring-offset-2"
-                    onClick={clearFilters}
-                  >
-                    Clear filters
-                  </button>
+            <div className="overflow-hidden rounded-b-2xl border border-[#c8cdd3] bg-white">
+              {filteredRules.length ? (
+                filteredRules.map((rule) => {
+                  const expanded = expandedRule === rule.id;
+                  return (
+                    <article key={rule.id} data-rule-id={rule.id} className="border-b border-[#d7dce2] last:border-b-0">
+                      <button
+                        type="button"
+                        aria-expanded={expanded}
+                        className="grid w-full gap-3 px-4 py-4 text-left transition hover:bg-[#f7f8f9] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:items-center md:px-5"
+                        onClick={() => setExpandedRule(expanded ? null : rule.id)}
+                      >
+                        <span className="min-w-0">
+                          <span className="block font-semibold leading-5">{rule.title}</span>
+                          <span className="mt-1 block truncate text-sm text-[#6d7580]">{rule.impact_text}</span>
+                        </span>
+                        <span className="text-sm text-[#454c55]">{processLabels[rule.process]}</span>
+                        <StatusPill status={rule.status} />
+                        <ImpactPill impact={rule.impact} />
+                        <span className={`grid size-8 place-items-center rounded-lg border border-[#d7dce2] bg-white transition ${expanded ? "rotate-180" : ""}`}>
+                          <ChevronDownIcon className="size-4" />
+                        </span>
+                      </button>
+                      {expanded ? <RuleDetails rule={rule} /> : null}
+                    </article>
+                  );
+                })
+              ) : (
+                <div className="grid min-h-64 place-items-center px-6 text-center">
+                  <div>
+                    <span className="mx-auto grid size-11 place-items-center rounded-xl bg-[#eef0f2]">
+                      <SearchIcon className="size-5" />
+                    </span>
+                    <h3 className="mt-4 font-semibold">No matching rules</h3>
+                    <p className="mt-1 text-sm text-[#6d7580]">Change or clear the filters to see all rules.</p>
+                    <button type="button" className="market-outline-button mt-4" onClick={clearFilters}>Clear filters</button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          </section>
+
+          <section id="processes" className="mt-8 scroll-mt-20" aria-labelledby="processes-title">
+            <h2 id="processes-title" className="market-section-title">NL market process coverage</h2>
+            <p className="mt-1 text-sm text-[#6d7580]">Process map</p>
+            <div className="market-table-shell mt-3 overflow-x-auto">
+              <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+                <thead>
+                  <tr>
+                    <th>Process</th>
+                    <th>Decision question</th>
+                    <th>Rules</th>
+                    <th>High impact</th>
+                    <th>Next key date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {processSummaries.map((summary) => (
+                    <tr key={summary.name}>
+                      <td className="font-medium text-[#20252b]">{processLabels[summary.name]}</td>
+                      <td>{processQuestions[summary.name]}</td>
+                      <td>{summary.count}</td>
+                      <td>{summary.highCount}</td>
+                      <td className="whitespace-nowrap">{summary.nextDate ? formatDate(summary.nextDate) : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </section>
         </div>
       </main>

@@ -3,7 +3,7 @@ import { chromium } from "playwright-core";
 
 const chromePath =
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const pageUrl = "http://127.0.0.1:3000/market-rules";
+const pageUrl = `${process.env.SCREENSHOT_BASE_URL ?? "http://127.0.0.1:3000"}/market-rules`;
 const outputDirectory = "docs/screenshots";
 
 await mkdir(outputDirectory, { recursive: true });

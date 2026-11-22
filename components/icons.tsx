@@ -82,6 +82,72 @@ export function SparkIcon(props: IconProps) {
   );
 }
 
+export function BoltIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="m13.5 2-8 11h6l-1 9 8-12h-6l1-8Z" />
+    </svg>
+  );
+}
+
+export function HomeIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="m3 10 9-7 9 7v10H3V10Z" />
+      <path d="M9 20v-7h6v7" />
+    </svg>
+  );
+}
+
+export function ShieldIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="M12 3 4.5 6v5.5c0 4.5 3 7.8 7.5 9.5 4.5-1.7 7.5-5 7.5-9.5V6L12 3Z" />
+    </svg>
+  );
+}
+
+export function ChecklistIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="m3 6 1.5 1.5L7 4.5M10 6h11M3 12l1.5 1.5L7 10.5M10 12h11M3 18l1.5 1.5L7 16.5M10 18h11" />
+    </svg>
+  );
+}
+
+export function LayersIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="m12 3 9 5-9 5-9-5 9-5Z" />
+      <path d="m3 12 9 5 9-5M3 16l9 5 9-5" />
+    </svg>
+  );
+}
+
+export function BellIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
+    </svg>
+  );
+}
+
+export function CheckIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="m5 12 4.5 4.5L19 7" />
+    </svg>
+  );
+}
+
+export function CloseIcon(props: IconProps) {
+  return (
+    <svg aria-hidden="true" {...defaults} {...props}>
+      <path d="m6 6 12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
 export function WarningTriangleIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" {...defaults} {...props}>
