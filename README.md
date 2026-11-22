@@ -3,6 +3,23 @@ Hey! 👋
 
 This repo is the story of how I'd take trawa into the Netherlands, and the dashboard I built to do it.
 
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000/market-rules](http://localhost:3000/market-rules).
+
+## Checks
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
 ## Query Dutch national legislation
 
 `scripts/bwb_sru.py` queries the official Basiswettenbestand (BWB) SRU service
@@ -66,7 +83,7 @@ Apply `supabase/migrations/202611220001_create_compliance_source_documents.sql`
 through the normal migration workflow. The table is public-read with RLS and
 has no client write policy.
 
-After Dorien applies the migration, a scheduled server-side job can upsert a
+After the migration is applied, a scheduled server-side job can upsert a
 snapshot with service-role credentials:
 
 ```bash

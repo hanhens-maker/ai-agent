@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #062417;
+  --green-50: #e4fcf2;
+  --green-100: #cdfde9;
+  --green-200: #9bf3cf;
+  --green-300: #6eeeba;
+  --green-400: #29ed9b;
+  --green-600: #2aa370;
+  --green-800: #0c472f;
+  --green-950: #062417;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--green-300);
+  color: var(--green-950);
+}
+
+.palette-wash {
+  background:
+    radial-gradient(circle at 10% 0%, rgb(255 255 255 / 55%) 0, transparent 38%),
+    linear-gradient(
+      135deg,
+      var(--green-50) 0%,
+      var(--green-100) 28%,
+      var(--green-200) 55%,
+      var(--green-300) 78%,
+      var(--green-400) 100%
+    );
+}
+
+.palette-wash-soft {
+  background:
+    radial-gradient(circle at 84% 8%, var(--green-200) 0, transparent 35%),
+    linear-gradient(145deg, #ffffff 0%, var(--green-50) 42%, var(--green-100) 100%);
+}
+
+.palette-wash-sidebar {
+  background: linear-gradient(180deg, var(--green-50) 0%, #ffffff 54%, var(--green-100) 100%);
+}
+
+.green-panel-shadow {
+  box-shadow: 0 22px 60px rgb(12 71 47 / 10%);
+}
