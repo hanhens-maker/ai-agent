@@ -4,7 +4,7 @@ Rules for every agent in this repo (Claude Code, Codex, Cursor). Read this first
 
 ## Project
 GTM Netherlands dashboard for trawa, a German B2B energy supplier entering the Dutch market.
-Users: Fardau and Vincent at trawa (view only for now). Owner: Dorien.
+Users: trawa's Netherlands launch team (view only for now).
 Goal: show which Dutch rules, processes and market signals trawa needs to go live in NL.
 
 ## Stack
@@ -37,7 +37,7 @@ npm run build
 
 ## How you work
 - Work on a branch. Open a PR. Never push to `main`.
-- Never write to the live Supabase database. Data and schema change only through files in `supabase/migrations/` and `supabase/seed/`. Dorien applies them.
+- Never write to the live Supabase database. Data and schema change only through files in `supabase/migrations/` and `supabase/seed/`. A repository maintainer applies them.
 - Every table has Row Level Security on. Today: public read, no write. Design so edit roles (Fardau, Vincent) can be added later without a rebuild.
 - Never commit secrets. Keys live in `.env.local` (git-ignored) and Vercel settings.
 
