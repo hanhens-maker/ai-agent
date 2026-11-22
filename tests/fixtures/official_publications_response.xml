@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sru:searchRetrieveResponse
+  xmlns:sru="http://docs.oasis-open.org/ns/search-ws/sruResponse"
+  xmlns:gzd="http://standaarden.overheid.nl/sru"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:w="http://standaarden.overheid.nl/wetgeving/"
+  xmlns:c="http://standaarden.overheid.nl/collectie/">
+  <sru:version>2.0</sru:version>
+  <sru:numberOfRecords>1</sru:numberOfRecords>
+  <sru:records>
+    <sru:record>
+      <sru:recordData>
+        <gzd:gzd>
+          <gzd:originalData>
+            <w:meta>
+              <w:owmskern>
+                <dcterms:identifier>stcrt-2026-4089</dcterms:identifier>
+                <dcterms:title>Besluit ACM (Systeemcode elektriciteit 2026)</dcterms:title>
+                <dcterms:type>overige overheidsinformatie</dcterms:type>
+                <dcterms:language>nl</dcterms:language>
+                <dcterms:creator>Autoriteit Consument en Markt</dcterms:creator>
+                <dcterms:modified>2026-02-20</dcterms:modified>
+              </w:owmskern>
+              <w:owmsmantel>
+                <dcterms:available>2026-02-20</dcterms:available>
+                <dcterms:date>2026-02-20</dcterms:date>
+                <dcterms:hasVersion resourceIdentifier="https://zoek.officielebekendmakingen.nl/stcrt-2026-4089.html">1</dcterms:hasVersion>
+                <dcterms:subject>Economie | Markttoezicht</dcterms:subject>
+              </w:owmsmantel>
+              <w:tpmeta>
+                <c:product-area>officielepublicaties</c:product-area>
+                <c:content-area>officielepublicaties/stcrt/2026</c:content-area>
+                <w:jaargang>2026</w:jaargang>
+                <w:publicatienummer>4089</w:publicatienummer>
+                <w:publicatienaam>Staatscourant</w:publicatienaam>
+              </w:tpmeta>
+            </w:meta>
+          </gzd:originalData>
+          <gzd:enrichedData>
+            <gzd:url>https://repository.overheid.nl/stcrt-2026-4089.xml</gzd:url>
+            <gzd:preferredUrl>https://zoek.officielebekendmakingen.nl/stcrt-2026-4089.html</gzd:preferredUrl>
+            <gzd:itemUrl manifestation="pdf">https://repository.overheid.nl/stcrt-2026-4089.pdf</gzd:itemUrl>
+          </gzd:enrichedData>
+        </gzd:gzd>
+      </sru:recordData>
+      <sru:recordPosition>1</sru:recordPosition>
+    </sru:record>
+  </sru:records>
+</sru:searchRetrieveResponse>
