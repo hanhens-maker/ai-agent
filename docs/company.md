@@ -1,4 +1,4 @@
-# trawa (trawa Energy): activities, customers and markets
+# trawa (trawa Energy): activities, customers, and markets
 
 Checked on 22 November 2026. Based on public sources (website, company slides, press releases and investor posts). Figures were reported by the company or the press and have not been independently verified.
 
