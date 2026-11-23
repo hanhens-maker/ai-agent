@@ -10,7 +10,8 @@ Dutch energy-market rules, each mapped to the process trawa must build. First mo
 - `docs/contracts/data-contract.md`
 - `docs/contracts/api-contract.md`
 
-## Data
+## Current prototype data
+
 Table `market_rules` (migration in `supabase/migrations/`, data in `supabase/seed/market_rules.sql`).
 v1 content comes from the prototype at `/prototypes/nl-market-rules.html` (16 rules).
 
@@ -30,8 +31,53 @@ v1 content comes from the prototype at `/prototypes/nl-market-rules.html` (16 ru
 | check | boolean | true if any source is secondary |
 | checked_at | date | when sources were last checked |
 
+This shape is legacy UI data.
+
+It is not the target backend contract.
+
+## Backend transition
+
+The target UI reads the DTOs in `docs/contracts/data-contract.md` through the endpoints in `docs/contracts/api-contract.md`.
+
+| UI area | Target data |
+|---|---|
+| Needs attention | Open `ActionItem` records |
+| Supplier prerequisites | Verified requirement summaries for licence, balancing, data and billing |
+| Market rules radar | Paginated `ComplianceRequirementSummary` records |
+| Expanded rule | `ComplianceRequirementDetail` loaded on demand |
+| Regional grid | `ComplianceOverview.processes` aggregates |
+
+Compatibility rules:
+
+- Filters and search run through the API.
+- Do not filter only the currently loaded page.
+- The type filter is removed because sales opportunities are outside the compliance contract.
+- `active` renders as “In force”.
+- `upcoming` renders as “Coming”.
+- `effectiveFrom` renders as the key date.
+- `relevanceSummary` renders below the title.
+- `description` is literal source text.
+- Action status replaces the local requirement checkbox.
+- Viewer controls are read-only; mutation controls require `capabilities.canUpdateActions`.
+- Primary source data renders in lists; full citations render in expanded detail.
+- Loading, empty, error, retry and conflict behavior follows the API contract.
+
+## Design contract decision
+
+Do not add a separate design contract yet.
+
+This module doc owns the screen and interaction intent.
+
+The data and API contracts own backend compatibility.
+
+Add a design contract only when multiple modules reuse a complex component or interaction pattern.
+
 ## Rules for this module
-- `rule_text` states the source. `steps` are our suggestion: label them as such in the UI.
-- Scope assumptions (confirm before widening): B2B only (SME + mid-market), power and gas.
-- Key filters in the UI: process, kind, status, search.
-- When a `key_date` passes, update `status` and re-check the source.
+
+- In the prototype, `rule_text` states the source and `steps` are suggested work.
+- In the target UI, `description` is literal evidence and `actions` are operational work.
+- Target backend scope: B2B electricity only (SME + mid-market).
+- The current “Power + gas” UI label must change before backend integration.
+- Target filters: process, activity, impact, lifecycle and search.
+- Sales opportunities do not use the compliance endpoint.
+- Lifecycle changes come from reviewed source evidence, not from a client-side date check.
