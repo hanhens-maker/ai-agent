@@ -2,6 +2,10 @@
 
 Status: proposed for frontend/backend agreement. No schema or API implementation is included.
 
+The HTTP boundary is documented separately in [api-contract.md](api-contract.md).
+
+The TypeScript DTOs and sample responses below support that API proposal.
+
 ## Purpose
 
 Give trawa one electricity-compliance overview for its full-stack activities:
@@ -490,6 +494,10 @@ export interface ActionItemPatchRequest {
 ```
 
 ## API endpoints
+
+The endpoint list below shows how the data model is exposed.
+
+`api-contract.md` is canonical for request validation, pagination, authorization, errors and versioning.
 
 Use Next.js route handlers as the boundary between the UI and Supabase. The frontend must not query the proposed normalized tables directly.
 
