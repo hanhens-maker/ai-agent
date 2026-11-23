@@ -25,6 +25,7 @@ docs/                 module docs: read before you work on a module
 ## Modules
 Working on a module? Read its doc first.
 - Market rules radar → `docs/market-rules.md`
+- Market rules frontend or data integration → also read `docs/data-contract.md` before changing UI or data access. The contract is proposed; migrations and APIs described there are not implemented unless present in the repo.
 - New module → copy the shape of `docs/market-rules.md` and add a line here
 
 ## Commands
