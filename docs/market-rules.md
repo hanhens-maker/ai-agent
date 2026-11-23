@@ -64,13 +64,13 @@ Compatibility rules:
 
 ## Design contract decision
 
-Do not add a separate design contract yet.
+The approved dashboard presentation and responsive behavior are protected by `docs/frontend-design-contract.md`.
 
-This module doc owns the screen and interaction intent.
+This module doc owns the market-rules screen and interaction intent.
 
 The data and API contracts own backend compatibility.
 
-Add a design contract only when multiple modules reuse a complex component or interaction pattern.
+Backend integration changes the data source through route handlers and adapters. It does not replace the dashboard structure or styling.
 
 ## Rules for this module
 

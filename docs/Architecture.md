@@ -112,6 +112,8 @@ Writes are deferred until authentication and roles exist.
 | `docs/` | Architecture, module intent and company context |
 | `docs/contracts/` | Data and API boundaries |
 
+The visual and responsive boundary between presentation and backend integration is defined in `docs/frontend-design-contract.md`.
+
 ## Data ownership
 
 - Official authorities own source documents.
@@ -156,6 +158,7 @@ Do not combine quoted evidence, internal interpretation and task progress in one
 ## Documentation map
 
 - [Market rules module](market-rules.md)
+- [Frontend design contract](frontend-design-contract.md)
 - [Company context](company.md)
 - [Data contract](contracts/data-contract.md)
 - [API contract](contracts/api-contract.md)
