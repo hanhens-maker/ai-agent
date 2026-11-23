@@ -76,10 +76,10 @@ function SelectFilter<T extends string>({
   options: readonly { value: T; label: string }[];
 }) {
   return (
-    <label className="relative min-w-40 flex-1 sm:flex-none">
+    <label className="relative min-w-0 flex-1 sm:min-w-40 sm:flex-none">
       <span className="sr-only">{label}</span>
       <select
-        className="h-10 w-full appearance-none rounded-xl border border-[#d7dce2] bg-white pl-3 pr-9 text-sm font-medium text-[#20252b] outline-none transition hover:border-[#9aa3ad] focus:border-[#20252b] focus:ring-2 focus:ring-[#20252b]/10"
+        className="h-10 w-full appearance-none rounded-full border border-[#9BF3CF] bg-[#FFFDF7] pl-3 pr-8 text-xs font-medium text-[#062417] outline-none transition hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]/60 sm:h-11 sm:pl-4 sm:pr-10 sm:text-sm"
         value={value}
         onChange={(event) => onChange(event.target.value as FilterValue<T>)}
       >
@@ -90,7 +90,7 @@ function SelectFilter<T extends string>({
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#6d7580]" />
+      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#0C472F] sm:right-3.5 sm:top-3.5" />
     </label>
   );
 }
@@ -99,7 +99,7 @@ function StatusPill({ status }: { status: MarketRuleStatus }) {
   const isInForce = status === "in_force";
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e9ebee] px-2.5 py-1 text-xs font-medium text-[#20252b]">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CDFDE9] px-2.5 py-1 text-xs font-medium text-[#062417]">
       {isInForce ? <CheckIcon className="size-3.5" /> : <ClockIcon className="size-3.5" />}
       {isInForce ? "In force" : "Coming"}
     </span>
@@ -111,10 +111,10 @@ function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
     <span
       className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
         impact === "high"
-          ? "border-[#20252b] bg-[#20252b] text-white"
+          ? "border-[#062417] bg-[#062417] text-white"
           : impact === "medium"
-            ? "border-[#b7bec6] bg-[#f1f2f4] text-[#20252b]"
-            : "border-[#d7dce2] bg-white text-[#59616b]"
+            ? "border-[#6EEEBA] bg-[#CDFDE9] text-[#0C472F]"
+            : "border-[#9BF3CF] bg-[#FFFDF7] text-[#0C472F]"
       }`}
     >
       {impactLabels[impact]}
@@ -124,33 +124,33 @@ function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
 
 function RuleDetails({ rule }: { rule: MarketRule }) {
   return (
-    <div className="grid gap-6 border-t border-[#d7dce2] bg-[#f7f8f9] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
+    <div className="grid gap-6 border-t border-[#CDFDE9] bg-[#FBF7EB] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
       <div>
         <p className="market-kicker">What the rule says</p>
-        <p className="mt-2 text-sm leading-6 text-[#454c55]">{rule.rule_text}</p>
+        <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.rule_text}</p>
 
         <p className="market-kicker mt-5">What this means for trawa</p>
-        <p className="mt-2 text-sm leading-6 text-[#454c55]">{rule.impact_text}</p>
+        <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.impact_text}</p>
 
-        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#6d7580]">
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#2AA370]">
           <span>Checked {formatDate(rule.checked_at)}</span>
           {rule.check ? (
-            <span className="rounded-full border border-[#c8cdd3] bg-white px-2 py-1 font-medium text-[#454c55]">
+            <span className="rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-2 py-1 font-medium text-[#0C472F]">
               Secondary source — re-check
             </span>
           ) : null}
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#d7dce2] bg-white p-4">
+      <div className="rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] p-4">
         <p className="market-kicker flex items-center gap-2">
           <SparkIcon className="size-4" />
           Suggested process steps
         </p>
         <ol className="mt-3 space-y-3">
           {rule.steps.map((step, index) => (
-            <li key={step} className="flex gap-3 text-sm leading-5 text-[#454c55]">
-              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#20252b] text-[11px] font-semibold text-white">
+            <li key={step} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#0C472F] text-[11px] font-semibold text-white">
                 {index + 1}
               </span>
               {step}
@@ -158,7 +158,7 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
           ))}
         </ol>
 
-        <div className="mt-5 border-t border-[#e3e6e9] pt-4">
+        <div className="mt-5 border-t border-[#CDFDE9] pt-4">
           <p className="market-kicker">Evidence / sources</p>
           <div className="mt-2 flex flex-col items-start gap-2">
             {rule.sources.map((source) => (
@@ -167,7 +167,7 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
                 href={source.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#20252b] underline decoration-[#aab0b8] underline-offset-4 hover:decoration-[#20252b]"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
               >
                 {source.label}
                 <ArrowUpRightIcon className="size-3.5" />
@@ -193,6 +193,9 @@ export function MarketRulesDashboard({
   const [status, setStatus] = useState<FilterValue<MarketRuleStatus>>("all");
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const [completedAttentionRules, setCompletedAttentionRules] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const filteredRules = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -238,6 +241,10 @@ export function MarketRulesDashboard({
     [rules],
   );
 
+  const remainingAttentionCount = attentionRules.filter(
+    (rule) => !completedAttentionRules.has(rule.id),
+  ).length;
+
   const processSummaries = useMemo(
     () =>
       marketRuleProcesses.map((processName) => {
@@ -277,13 +284,22 @@ export function MarketRulesDashboard({
     });
   }
 
+  function setAttentionRuleCompleted(ruleId: string, completed: boolean) {
+    setCompletedAttentionRules((current) => {
+      const next = new Set(current);
+      if (completed) next.add(ruleId);
+      else next.delete(ruleId);
+      return next;
+    });
+  }
+
   return (
-    <div className="min-h-screen bg-[#f4f5f6] text-[#20252b]">
-      <header className="sticky top-0 z-40 border-b border-[#d7dce2] bg-white/95 backdrop-blur lg:hidden">
-        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-          <a href="#top" className="flex items-center gap-3 font-semibold tracking-[-0.02em]">
-            <span className="grid size-9 place-items-center rounded-xl bg-[#eef0f2]">
-              <BoltIcon className="size-5" />
+    <div className="min-h-screen bg-[#FFFDF7] text-[#062417]">
+      <header className="sticky top-0 z-40 border-b border-[#CDFDE9] bg-[#FFFDF7]/95 backdrop-blur lg:hidden">
+        <div className="flex h-14 items-center justify-between px-3 sm:h-16 sm:px-6">
+          <a href="#top" className="flex items-center gap-2.5 text-sm font-semibold tracking-[-0.02em] sm:gap-3 sm:text-base">
+            <span className="grid size-8 place-items-center rounded-lg bg-[#CDFDE9] text-[#0C472F] sm:size-9 sm:rounded-xl">
+              <BoltIcon className="size-4 sm:size-5" />
             </span>
             Netherlands GTM Dashboard
           </a>
@@ -291,14 +307,14 @@ export function MarketRulesDashboard({
             type="button"
             aria-label={mobileNavigationOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={mobileNavigationOpen}
-            className="grid size-10 place-items-center rounded-xl border border-[#d7dce2] bg-white"
+            className="grid size-9 place-items-center rounded-lg border border-[#9BF3CF] bg-[#FFFDF7] sm:size-10 sm:rounded-xl"
             onClick={() => setMobileNavigationOpen((current) => !current)}
           >
             {mobileNavigationOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
           </button>
         </div>
         {mobileNavigationOpen ? (
-          <nav className="grid gap-1 border-t border-[#e3e6e9] bg-white p-3 text-sm">
+          <nav className="grid gap-1 border-t border-[#CDFDE9] bg-[#FFFDF7] p-3 text-sm">
             <a href="#top" className="market-nav-link market-nav-link-active" onClick={() => setMobileNavigationOpen(false)}>
               <HomeIcon className="size-5" /> Overview
             </a>
@@ -308,16 +324,16 @@ export function MarketRulesDashboard({
             <a href="#prerequisites" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
               <ChecklistIcon className="size-5" /> Prerequisites
             </a>
-            <a href="#processes" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
-              <LayersIcon className="size-5" /> Process coverage
+            <a href="#regional-grid" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
+              <LayersIcon className="size-5" /> Regional grid
             </a>
           </nav>
         ) : null}
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#d7dce2] bg-[#f7f8f9] px-3 py-7 lg:flex">
+      <aside className="palette-wash-sidebar fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#CDFDE9] px-3 py-7 lg:flex">
         <a href="#top" className="flex items-center gap-3 px-2">
-          <span className="grid size-11 place-items-center rounded-xl bg-[#e9ebee]">
+          <span className="grid size-11 place-items-center rounded-xl bg-[#CDFDE9] text-[#0C472F]">
             <BoltIcon className="size-6" />
           </span>
           <span className="text-[17px] font-semibold leading-5 tracking-[-0.025em]">
@@ -336,14 +352,14 @@ export function MarketRulesDashboard({
           <a href="#prerequisites" className="market-nav-link">
             <ChecklistIcon className="size-5" /> Prerequisites
           </a>
-          <a href="#processes" className="market-nav-link">
-            <LayersIcon className="size-5" /> Process coverage
+          <a href="#regional-grid" className="market-nav-link">
+            <LayersIcon className="size-5" /> Regional grid
           </a>
         </nav>
 
-        <div className="mt-auto rounded-xl border border-[#d7dce2] bg-white p-4">
+        <div className="mt-auto rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] p-4">
           <p className="text-sm font-semibold">Market scope</p>
-          <p className="mt-1.5 text-xs leading-5 text-[#6d7580]">
+          <p className="mt-1.5 text-xs leading-5 text-[#0C472F]/70">
             B2B · SME + mid-market
             <br />
             Power + gas · Netherlands
@@ -352,59 +368,78 @@ export function MarketRulesDashboard({
       </aside>
 
       <main id="top" className="lg:pl-[250px]">
-        <div className="mx-auto max-w-[1480px] px-4 pb-16 pt-7 sm:px-7 lg:px-8 lg:pt-5 xl:px-9">
+        <div className="mx-auto max-w-[1480px] px-3 pb-12 pt-5 sm:px-7 sm:pb-16 sm:pt-7 lg:px-8 lg:pt-5 xl:px-9">
           <header>
-            <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.045em] sm:text-[38px]">
+            <h1 className="max-w-5xl text-[32px] font-semibold leading-[1.04] tracking-[-0.05em] sm:text-[50px] sm:leading-[1.02] sm:tracking-[-0.055em]">
               Netherlands market &amp; compliance overview
             </h1>
-            <p className="mt-1 text-base text-[#59616b] sm:text-lg">
+            <p className="mt-1 text-[15px] leading-6 text-[#0C472F]/75 sm:text-lg">
               Energy market entry, supplier setup and regulatory compliance in the Netherlands
             </p>
             {isMockData ? (
-              <p className="mt-3 inline-flex rounded-full border border-[#c8cdd3] bg-white px-3 py-1 text-xs font-medium text-[#59616b]">
+              <p className="mt-2.5 inline-flex rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-3 py-1 text-xs font-medium text-[#0C472F]/75 sm:mt-3">
                 Temporary interface data · verified backend content pending
               </p>
             ) : null}
           </header>
 
-          <section className="market-panel mt-7 overflow-hidden" aria-labelledby="attention-title">
-            <div className="flex flex-wrap items-center gap-3 px-4 py-4 sm:px-5">
-              <span className="grid size-9 place-items-center rounded-xl bg-white shadow-sm ring-1 ring-[#e3e6e9]">
-                <BellIcon className="size-5" />
+          <section className="market-panel mt-5 overflow-hidden sm:mt-7" aria-labelledby="attention-title">
+            <div className="flex flex-wrap items-center gap-2.5 px-3 py-3 sm:gap-3 sm:px-5 sm:py-4">
+              <span className="grid size-8 place-items-center rounded-lg bg-[#FFFDF7] text-[#0C472F] shadow-sm ring-1 ring-[#9BF3CF] sm:size-9 sm:rounded-xl">
+                <BellIcon className="size-4 sm:size-5" />
               </span>
-              <h2 id="attention-title" className="text-xl font-semibold tracking-[-0.025em]">
+              <h2 id="attention-title" className="text-lg font-semibold tracking-[-0.025em] sm:text-xl">
                 Needs attention
               </h2>
-              <span className="text-sm text-[#59616b]">
-                {attentionRules.length} {attentionRules.length === 1 ? "item" : "items"} to review
+              <span className="text-xs text-[#0C472F]/75 sm:text-sm">
+                {remainingAttentionCount} {remainingAttentionCount === 1 ? "item" : "items"} to review
               </span>
             </div>
 
-            <div className="mx-2 mb-2 overflow-hidden rounded-xl border border-white bg-white/80">
+            <div className="mx-1.5 mb-1.5 overflow-hidden rounded-[15px] border border-[#9BF3CF] bg-[#FFFDF7]/90 sm:mx-2 sm:mb-2 sm:rounded-xl">
               {attentionRules.slice(0, 4).map((rule) => (
                 <div
                   key={rule.id}
-                  className="grid gap-3 border-b border-[#d7dce2] px-3 py-3 last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:items-center"
+                  className={`grid grid-cols-[36px_minmax(0,1fr)_36px] items-center gap-2 border-b border-[#CDFDE9] px-2.5 py-2.5 transition last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:gap-3 sm:px-3 sm:py-3 ${completedAttentionRules.has(rule.id) ? "bg-[#E4FCF2]/70" : ""}`}
                 >
-                  <span className="hidden size-10 place-items-center rounded-xl border border-[#c8cdd3] bg-[#f7f8f9] sm:grid">
-                    {rule.status === "coming" ? <ClockIcon className="size-5" /> : <CheckIcon className="size-5" />}
-                  </span>
+                  <label className="grid size-9 cursor-pointer place-items-center rounded-lg border border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F] transition hover:border-[#2AA370] sm:size-10 sm:rounded-xl">
+                    <span className="sr-only">Mark {rule.title} complete</span>
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={completedAttentionRules.has(rule.id)}
+                      onChange={(event) =>
+                        setAttentionRuleCompleted(rule.id, event.target.checked)
+                      }
+                    />
+                    <span className="grid size-[18px] place-items-center rounded-[5px] border border-[#2AA370] bg-[#FFFDF7] text-transparent transition peer-checked:bg-[#0C472F] peer-checked:text-white sm:size-5 sm:rounded-md">
+                      <CheckIcon className="size-3 sm:size-3.5" />
+                    </span>
+                  </label>
                   <span className="min-w-0">
-                    <span className="block font-semibold leading-5">{rule.title}</span>
-                    <span className="mt-0.5 block truncate text-sm text-[#59616b]">
+                    <span className={`block truncate text-[15px] font-semibold leading-5 sm:text-base ${completedAttentionRules.has(rule.id) ? "text-[#0C472F]/60 line-through" : ""}`}>{rule.title}</span>
+                    <span className="block truncate text-[13px] leading-5 text-[#0C472F]/70 sm:mt-0.5 sm:text-sm">
                       {processLabels[rule.process]} · {rule.impact_text}
                     </span>
                   </span>
-                  <button type="button" className="market-outline-button" onClick={() => showRule(rule)}>
-                    Review details
+                  <button
+                    type="button"
+                    aria-label={`Check details for ${rule.title}`}
+                    className="inline-flex size-9 items-center justify-center rounded-lg border border-[#0C472F] bg-[#FFFDF7] text-[#0C472F] transition hover:bg-[#E4FCF2] focus:outline-none focus:ring-2 focus:ring-[#29ED9B] focus:ring-offset-2 sm:h-10 sm:w-auto sm:gap-2 sm:rounded-full sm:px-4"
+                    onClick={() => showRule(rule)}
+                  >
+                    <ArrowUpRightIcon className="size-4" />
+                    <span className="sr-only sm:not-sr-only">Check details</span>
                   </button>
                 </div>
               ))}
             </div>
           </section>
 
-          <section id="prerequisites" className="mt-8 scroll-mt-20" aria-labelledby="prerequisites-title">
-            <h2 id="prerequisites-title" className="market-section-title">Supplier prerequisites</h2>
+          <section id="prerequisites" className="mt-5 scroll-mt-20 sm:mt-8" aria-labelledby="prerequisites-title">
+            <div className="market-section-banner">
+              <h2 id="prerequisites-title" className="market-section-title">Supplier prerequisites</h2>
+            </div>
             <div className="market-table-shell mt-3 overflow-x-auto">
               <table className="w-full min-w-[820px] border-collapse text-left text-sm">
                 <thead>
@@ -419,7 +454,7 @@ export function MarketRulesDashboard({
                 <tbody>
                   {prerequisiteRules.map((rule) => (
                     <tr key={rule.id}>
-                      <td className="font-medium text-[#20252b]">{rule.title}</td>
+                      <td className="font-medium text-[#062417]">{rule.title}</td>
                       <td>{processLabels[rule.process]}</td>
                       <td><StatusPill status={rule.status} /></td>
                       <td>
@@ -427,7 +462,7 @@ export function MarketRulesDashboard({
                           href={rule.sources[0]?.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 font-medium underline decoration-[#b7bec6] underline-offset-4 hover:decoration-[#20252b]"
+                          className="inline-flex items-center gap-1.5 font-medium text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
                         >
                           {rule.sources[0]?.label ?? "No source"}
                           <ArrowUpRightIcon className="size-3.5" />
@@ -441,11 +476,11 @@ export function MarketRulesDashboard({
             </div>
           </section>
 
-          <section id="rules" className="mt-8 scroll-mt-20" aria-labelledby="rules-title">
-            <div className="flex flex-wrap items-end justify-between gap-3">
+          <section id="rules" className="mt-5 scroll-mt-20 sm:mt-8" aria-labelledby="rules-title">
+            <div className="market-section-banner flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h2 id="rules-title" className="market-section-title">Market rules radar</h2>
-                <p aria-live="polite" className="mt-1 text-sm text-[#6d7580]">
+                <p aria-live="polite" className="mt-1 text-sm text-[#0C472F]/70">
                   Showing {filteredRules.length} of {rules.length} rules
                 </p>
               </div>
@@ -456,16 +491,16 @@ export function MarketRulesDashboard({
               ) : null}
             </div>
 
-            <div className="mt-3 flex flex-col gap-2 rounded-t-2xl border border-b-0 border-[#c8cdd3] bg-[#eef0f2] p-3 xl:flex-row">
+            <div className="mt-2 flex flex-col gap-2 rounded-t-2xl border border-b-0 border-[#9BF3CF] bg-[#CDFDE9] p-2.5 sm:mt-3 sm:rounded-t-[22px] sm:p-3 xl:flex-row">
               <label className="relative min-w-0 flex-1">
                 <span className="sr-only">Search rules</span>
-                <SearchIcon className="absolute left-3 top-2.5 size-5 text-[#6d7580]" />
+                <SearchIcon className="absolute left-3.5 top-2.5 size-5 text-[#2AA370] sm:left-4 sm:top-3" />
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search rules, requirements or steps"
-                  className="h-10 w-full rounded-xl border border-[#d7dce2] bg-white pl-10 pr-3 text-sm outline-none placeholder:text-[#8b929b] focus:border-[#20252b] focus:ring-2 focus:ring-[#20252b]/10"
+                  className="h-10 w-full rounded-full border border-[#9BF3CF] bg-[#FFFDF7] pl-10 pr-3 text-[13px] text-[#062417] outline-none placeholder:text-[#2AA370]/70 focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]/60 sm:h-11 sm:pl-11 sm:pr-4 sm:text-sm"
                 />
               </label>
               <div className="flex flex-wrap gap-2">
@@ -496,26 +531,26 @@ export function MarketRulesDashboard({
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-b-2xl border border-[#c8cdd3] bg-white">
+            <div className="overflow-hidden rounded-b-2xl border border-[#9BF3CF] bg-[#FFFDF7] shadow-[0_12px_32px_rgba(12,71,47,0.08)] sm:rounded-b-[22px]">
               {filteredRules.length ? (
                 filteredRules.map((rule) => {
                   const expanded = expandedRule === rule.id;
                   return (
-                    <article key={rule.id} data-rule-id={rule.id} className="border-b border-[#d7dce2] last:border-b-0">
+                    <article key={rule.id} data-rule-id={rule.id} className="border-b border-[#CDFDE9] last:border-b-0">
                       <button
                         type="button"
                         aria-expanded={expanded}
-                        className="grid w-full gap-3 px-4 py-4 text-left transition hover:bg-[#f7f8f9] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:items-center md:px-5"
+                        className="grid w-full grid-cols-[minmax(0,1fr)_32px] items-center gap-2.5 px-3 py-3 text-left transition hover:bg-[#E4FCF2] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:gap-3 md:px-5 md:py-4"
                         onClick={() => setExpandedRule(expanded ? null : rule.id)}
                       >
                         <span className="min-w-0">
-                          <span className="block font-semibold leading-5">{rule.title}</span>
-                          <span className="mt-1 block truncate text-sm text-[#6d7580]">{rule.impact_text}</span>
+                          <span className="block truncate text-[15px] font-semibold leading-5 sm:text-base">{rule.title}</span>
+                          <span className="block truncate text-[13px] leading-5 text-[#0C472F]/70 sm:mt-1 sm:text-sm">{rule.impact_text}</span>
                         </span>
-                        <span className="text-sm text-[#454c55]">{processLabels[rule.process]}</span>
-                        <StatusPill status={rule.status} />
-                        <ImpactPill impact={rule.impact} />
-                        <span className={`grid size-8 place-items-center rounded-lg border border-[#d7dce2] bg-white transition ${expanded ? "rotate-180" : ""}`}>
+                        <span className="hidden text-sm text-[#0C472F] md:block">{processLabels[rule.process]}</span>
+                        <span className="hidden md:inline-flex"><StatusPill status={rule.status} /></span>
+                        <span className="hidden md:inline-flex"><ImpactPill impact={rule.impact} /></span>
+                        <span className={`grid size-8 place-items-center rounded-full border border-[#9BF3CF] bg-[#FFFDF7] text-[#0C472F] transition ${expanded ? "rotate-180 bg-[#CDFDE9]" : ""}`}>
                           <ChevronDownIcon className="size-4" />
                         </span>
                       </button>
@@ -526,11 +561,11 @@ export function MarketRulesDashboard({
               ) : (
                 <div className="grid min-h-64 place-items-center px-6 text-center">
                   <div>
-                    <span className="mx-auto grid size-11 place-items-center rounded-xl bg-[#eef0f2]">
+                    <span className="mx-auto grid size-11 place-items-center rounded-2xl bg-[#CDFDE9] text-[#0C472F]">
                       <SearchIcon className="size-5" />
                     </span>
                     <h3 className="mt-4 font-semibold">No matching rules</h3>
-                    <p className="mt-1 text-sm text-[#6d7580]">Change or clear the filters to see all rules.</p>
+                    <p className="mt-1 text-sm text-[#0C472F]/70">Change or clear the filters to see all rules.</p>
                     <button type="button" className="market-outline-button mt-4" onClick={clearFilters}>Clear filters</button>
                   </div>
                 </div>
@@ -538,9 +573,11 @@ export function MarketRulesDashboard({
             </div>
           </section>
 
-          <section id="processes" className="mt-8 scroll-mt-20" aria-labelledby="processes-title">
-            <h2 id="processes-title" className="market-section-title">NL market process coverage</h2>
-            <p className="mt-1 text-sm text-[#6d7580]">Process map</p>
+          <section id="regional-grid" className="mt-5 scroll-mt-20 sm:mt-8" aria-labelledby="regional-grid-title">
+            <div className="market-section-banner">
+              <h2 id="regional-grid-title" className="market-section-title">Regional grid layer</h2>
+              <p className="mt-1 text-sm text-[#0C472F]/70">Process coverage by market function</p>
+            </div>
             <div className="market-table-shell mt-3 overflow-x-auto">
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead>
@@ -555,7 +592,7 @@ export function MarketRulesDashboard({
                 <tbody>
                   {processSummaries.map((summary) => (
                     <tr key={summary.name}>
-                      <td className="font-medium text-[#20252b]">{processLabels[summary.name]}</td>
+                      <td className="font-medium text-[#062417]">{processLabels[summary.name]}</td>
                       <td>{processQuestions[summary.name]}</td>
                       <td>{summary.count}</td>
                       <td>{summary.highCount}</td>
