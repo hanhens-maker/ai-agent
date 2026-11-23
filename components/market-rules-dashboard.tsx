@@ -79,7 +79,7 @@ function SelectFilter<T extends string>({
     <label className="relative min-w-40 flex-1 sm:flex-none">
       <span className="sr-only">{label}</span>
       <select
-        className="h-10 w-full appearance-none rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] pl-3 pr-9 text-sm font-medium text-[#062417] outline-none transition hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]/60"
+        className="h-11 w-full appearance-none rounded-full border border-[#9BF3CF] bg-[#FFFDF7] pl-4 pr-10 text-sm font-medium text-[#062417] outline-none transition hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]/60"
         value={value}
         onChange={(event) => onChange(event.target.value as FilterValue<T>)}
       >
@@ -90,7 +90,7 @@ function SelectFilter<T extends string>({
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#0C472F]" />
+      <ChevronDownIcon className="pointer-events-none absolute right-3.5 top-3.5 size-4 text-[#0C472F]" />
     </label>
   );
 }
@@ -193,6 +193,9 @@ export function MarketRulesDashboard({
   const [status, setStatus] = useState<FilterValue<MarketRuleStatus>>("all");
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const [completedAttentionRules, setCompletedAttentionRules] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const filteredRules = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -238,6 +241,10 @@ export function MarketRulesDashboard({
     [rules],
   );
 
+  const remainingAttentionCount = attentionRules.filter(
+    (rule) => !completedAttentionRules.has(rule.id),
+  ).length;
+
   const processSummaries = useMemo(
     () =>
       marketRuleProcesses.map((processName) => {
@@ -277,6 +284,15 @@ export function MarketRulesDashboard({
     });
   }
 
+  function setAttentionRuleCompleted(ruleId: string, completed: boolean) {
+    setCompletedAttentionRules((current) => {
+      const next = new Set(current);
+      if (completed) next.add(ruleId);
+      else next.delete(ruleId);
+      return next;
+    });
+  }
+
   return (
     <div className="min-h-screen bg-[#FFFDF7] text-[#062417]">
       <header className="sticky top-0 z-40 border-b border-[#CDFDE9] bg-[#FFFDF7]/95 backdrop-blur lg:hidden">
@@ -308,14 +324,14 @@ export function MarketRulesDashboard({
             <a href="#prerequisites" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
               <ChecklistIcon className="size-5" /> Prerequisites
             </a>
-            <a href="#processes" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
-              <LayersIcon className="size-5" /> Process coverage
+            <a href="#regional-grid" className="market-nav-link" onClick={() => setMobileNavigationOpen(false)}>
+              <LayersIcon className="size-5" /> Regional grid
             </a>
           </nav>
         ) : null}
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#CDFDE9] bg-[#FBF7EB] px-3 py-7 lg:flex">
+      <aside className="palette-wash-sidebar fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#CDFDE9] px-3 py-7 lg:flex">
         <a href="#top" className="flex items-center gap-3 px-2">
           <span className="grid size-11 place-items-center rounded-xl bg-[#CDFDE9] text-[#0C472F]">
             <BoltIcon className="size-6" />
@@ -336,8 +352,8 @@ export function MarketRulesDashboard({
           <a href="#prerequisites" className="market-nav-link">
             <ChecklistIcon className="size-5" /> Prerequisites
           </a>
-          <a href="#processes" className="market-nav-link">
-            <LayersIcon className="size-5" /> Process coverage
+          <a href="#regional-grid" className="market-nav-link">
+            <LayersIcon className="size-5" /> Regional grid
           </a>
         </nav>
 
@@ -354,7 +370,7 @@ export function MarketRulesDashboard({
       <main id="top" className="lg:pl-[250px]">
         <div className="mx-auto max-w-[1480px] px-4 pb-16 pt-7 sm:px-7 lg:px-8 lg:pt-5 xl:px-9">
           <header>
-            <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.045em] sm:text-[38px]">
+            <h1 className="max-w-5xl text-[38px] font-semibold leading-[1.02] tracking-[-0.055em] sm:text-[50px]">
               Netherlands market &amp; compliance overview
             </h1>
             <p className="mt-1 text-base text-[#0C472F]/75 sm:text-lg">
@@ -376,7 +392,7 @@ export function MarketRulesDashboard({
                 Needs attention
               </h2>
               <span className="text-sm text-[#0C472F]/75">
-                {attentionRules.length} {attentionRules.length === 1 ? "item" : "items"} to review
+                {remainingAttentionCount} {remainingAttentionCount === 1 ? "item" : "items"} to review
               </span>
             </div>
 
@@ -384,19 +400,30 @@ export function MarketRulesDashboard({
               {attentionRules.slice(0, 4).map((rule) => (
                 <div
                   key={rule.id}
-                  className="grid gap-3 border-b border-[#CDFDE9] px-3 py-3 last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:items-center"
+                  className={`grid gap-3 border-b border-[#CDFDE9] px-3 py-3 transition last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:items-center ${completedAttentionRules.has(rule.id) ? "bg-[#E4FCF2]/70" : ""}`}
                 >
-                  <span className="hidden size-10 place-items-center rounded-xl border border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F] sm:grid">
-                    {rule.status === "coming" ? <ClockIcon className="size-5" /> : <CheckIcon className="size-5" />}
-                  </span>
+                  <label className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F] transition hover:border-[#2AA370]">
+                    <span className="sr-only">Mark {rule.title} complete</span>
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={completedAttentionRules.has(rule.id)}
+                      onChange={(event) =>
+                        setAttentionRuleCompleted(rule.id, event.target.checked)
+                      }
+                    />
+                    <span className="grid size-5 place-items-center rounded-md border border-[#2AA370] bg-[#FFFDF7] text-transparent transition peer-checked:bg-[#0C472F] peer-checked:text-white">
+                      <CheckIcon className="size-3.5" />
+                    </span>
+                  </label>
                   <span className="min-w-0">
-                    <span className="block font-semibold leading-5">{rule.title}</span>
+                    <span className={`block font-semibold leading-5 ${completedAttentionRules.has(rule.id) ? "text-[#0C472F]/60 line-through" : ""}`}>{rule.title}</span>
                     <span className="mt-0.5 block truncate text-sm text-[#0C472F]/70">
                       {processLabels[rule.process]} · {rule.impact_text}
                     </span>
                   </span>
                   <button type="button" className="market-outline-button" onClick={() => showRule(rule)}>
-                    Review details
+                    Check details
                   </button>
                 </div>
               ))}
@@ -404,7 +431,9 @@ export function MarketRulesDashboard({
           </section>
 
           <section id="prerequisites" className="mt-8 scroll-mt-20" aria-labelledby="prerequisites-title">
-            <h2 id="prerequisites-title" className="market-section-title">Supplier prerequisites</h2>
+            <div className="market-section-banner">
+              <h2 id="prerequisites-title" className="market-section-title">Supplier prerequisites</h2>
+            </div>
             <div className="market-table-shell mt-3 overflow-x-auto">
               <table className="w-full min-w-[820px] border-collapse text-left text-sm">
                 <thead>
@@ -419,7 +448,7 @@ export function MarketRulesDashboard({
                 <tbody>
                   {prerequisiteRules.map((rule) => (
                     <tr key={rule.id}>
-                      <td className="font-medium text-[#20252b]">{rule.title}</td>
+                      <td className="font-medium text-[#062417]">{rule.title}</td>
                       <td>{processLabels[rule.process]}</td>
                       <td><StatusPill status={rule.status} /></td>
                       <td>
@@ -427,7 +456,7 @@ export function MarketRulesDashboard({
                           href={rule.sources[0]?.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 font-medium underline decoration-[#b7bec6] underline-offset-4 hover:decoration-[#20252b]"
+                          className="inline-flex items-center gap-1.5 font-medium text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
                         >
                           {rule.sources[0]?.label ?? "No source"}
                           <ArrowUpRightIcon className="size-3.5" />
@@ -442,10 +471,10 @@ export function MarketRulesDashboard({
           </section>
 
           <section id="rules" className="mt-8 scroll-mt-20" aria-labelledby="rules-title">
-            <div className="flex flex-wrap items-end justify-between gap-3">
+            <div className="market-section-banner flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h2 id="rules-title" className="market-section-title">Market rules radar</h2>
-                <p aria-live="polite" className="mt-1 text-sm text-[#6d7580]">
+                <p aria-live="polite" className="mt-1 text-sm text-[#0C472F]/70">
                   Showing {filteredRules.length} of {rules.length} rules
                 </p>
               </div>
@@ -456,16 +485,16 @@ export function MarketRulesDashboard({
               ) : null}
             </div>
 
-            <div className="mt-3 flex flex-col gap-2 rounded-t-2xl border border-b-0 border-[#c8cdd3] bg-[#eef0f2] p-3 xl:flex-row">
+            <div className="mt-3 flex flex-col gap-2 rounded-t-[22px] border border-b-0 border-[#9BF3CF] bg-[#CDFDE9] p-3 xl:flex-row">
               <label className="relative min-w-0 flex-1">
                 <span className="sr-only">Search rules</span>
-                <SearchIcon className="absolute left-3 top-2.5 size-5 text-[#6d7580]" />
+                <SearchIcon className="absolute left-4 top-3 size-5 text-[#2AA370]" />
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Search rules, requirements or steps"
-                  className="h-10 w-full rounded-xl border border-[#d7dce2] bg-white pl-10 pr-3 text-sm outline-none placeholder:text-[#8b929b] focus:border-[#20252b] focus:ring-2 focus:ring-[#20252b]/10"
+                  className="h-11 w-full rounded-full border border-[#9BF3CF] bg-[#FFFDF7] pl-11 pr-4 text-sm text-[#062417] outline-none placeholder:text-[#2AA370]/70 focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]/60"
                 />
               </label>
               <div className="flex flex-wrap gap-2">
@@ -496,26 +525,26 @@ export function MarketRulesDashboard({
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-b-2xl border border-[#c8cdd3] bg-white">
+            <div className="overflow-hidden rounded-b-[22px] border border-[#9BF3CF] bg-[#FFFDF7] shadow-[0_12px_32px_rgba(12,71,47,0.08)]">
               {filteredRules.length ? (
                 filteredRules.map((rule) => {
                   const expanded = expandedRule === rule.id;
                   return (
-                    <article key={rule.id} data-rule-id={rule.id} className="border-b border-[#d7dce2] last:border-b-0">
+                    <article key={rule.id} data-rule-id={rule.id} className="border-b border-[#CDFDE9] last:border-b-0">
                       <button
                         type="button"
                         aria-expanded={expanded}
-                        className="grid w-full gap-3 px-4 py-4 text-left transition hover:bg-[#f7f8f9] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:items-center md:px-5"
+                        className="grid w-full gap-3 px-4 py-4 text-left transition hover:bg-[#E4FCF2] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:items-center md:px-5"
                         onClick={() => setExpandedRule(expanded ? null : rule.id)}
                       >
                         <span className="min-w-0">
                           <span className="block font-semibold leading-5">{rule.title}</span>
-                          <span className="mt-1 block truncate text-sm text-[#6d7580]">{rule.impact_text}</span>
+                          <span className="mt-1 block truncate text-sm text-[#0C472F]/70">{rule.impact_text}</span>
                         </span>
-                        <span className="text-sm text-[#454c55]">{processLabels[rule.process]}</span>
+                        <span className="text-sm text-[#0C472F]">{processLabels[rule.process]}</span>
                         <StatusPill status={rule.status} />
                         <ImpactPill impact={rule.impact} />
-                        <span className={`grid size-8 place-items-center rounded-lg border border-[#d7dce2] bg-white transition ${expanded ? "rotate-180" : ""}`}>
+                        <span className={`grid size-8 place-items-center rounded-full border border-[#9BF3CF] bg-[#FFFDF7] text-[#0C472F] transition ${expanded ? "rotate-180 bg-[#CDFDE9]" : ""}`}>
                           <ChevronDownIcon className="size-4" />
                         </span>
                       </button>
@@ -526,11 +555,11 @@ export function MarketRulesDashboard({
               ) : (
                 <div className="grid min-h-64 place-items-center px-6 text-center">
                   <div>
-                    <span className="mx-auto grid size-11 place-items-center rounded-xl bg-[#eef0f2]">
+                    <span className="mx-auto grid size-11 place-items-center rounded-2xl bg-[#CDFDE9] text-[#0C472F]">
                       <SearchIcon className="size-5" />
                     </span>
                     <h3 className="mt-4 font-semibold">No matching rules</h3>
-                    <p className="mt-1 text-sm text-[#6d7580]">Change or clear the filters to see all rules.</p>
+                    <p className="mt-1 text-sm text-[#0C472F]/70">Change or clear the filters to see all rules.</p>
                     <button type="button" className="market-outline-button mt-4" onClick={clearFilters}>Clear filters</button>
                   </div>
                 </div>
@@ -538,9 +567,11 @@ export function MarketRulesDashboard({
             </div>
           </section>
 
-          <section id="processes" className="mt-8 scroll-mt-20" aria-labelledby="processes-title">
-            <h2 id="processes-title" className="market-section-title">NL market process coverage</h2>
-            <p className="mt-1 text-sm text-[#6d7580]">Process map</p>
+          <section id="regional-grid" className="mt-8 scroll-mt-20" aria-labelledby="regional-grid-title">
+            <div className="market-section-banner">
+              <h2 id="regional-grid-title" className="market-section-title">Regional grid layer</h2>
+              <p className="mt-1 text-sm text-[#0C472F]/70">Process coverage by market function</p>
+            </div>
             <div className="market-table-shell mt-3 overflow-x-auto">
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead>
@@ -555,7 +586,7 @@ export function MarketRulesDashboard({
                 <tbody>
                   {processSummaries.map((summary) => (
                     <tr key={summary.name}>
-                      <td className="font-medium text-[#20252b]">{processLabels[summary.name]}</td>
+                      <td className="font-medium text-[#062417]">{processLabels[summary.name]}</td>
                       <td>{processQuestions[summary.name]}</td>
                       <td>{summary.count}</td>
                       <td>{summary.highCount}</td>
