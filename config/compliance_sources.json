@@ -1,0 +1,25 @@
+{
+  "bwb_regulations": [
+    {"title": "Energiewet", "identifier": "BWBR0050714"},
+    {"title": "Energiebesluit", "identifier": "BWBR0051745"},
+    {"title": "Energieregeling", "identifier": "BWBR0051774"},
+    {"title": "Invoeringsregeling Energiewet", "identifier": "BWBR0052069"}
+  ],
+  "market_scope": {
+    "energy_carrier": "electricity",
+    "customer_segment": "business customers",
+    "activities": ["supply", "manage", "flex", "trading"]
+  },
+  "acm_energy_index_url": "https://www.acm.nl/nl/energie/wetten-en-regels-voor-de-energiemarkt",
+  "acm_publications_not_before": "2026-01-01",
+  "acm_publications": [
+    {
+      "title": "Handreiking eindeleveringsprocedure energieleveranciers",
+      "url": "https://www.acm.nl/nl/publicaties/handreiking-eindeleveringsprocedure-energieleveranciers"
+    },
+    {
+      "title": "Eisen financiële positie energieleveranciers nader ingevuld",
+      "url": "https://www.acm.nl/nl/publicaties/eisen-financiele-positie-energieleveranciers-nader-ingevuld"
+    }
+  ]
+}

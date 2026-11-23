@@ -19,5 +19,9 @@
 *.tsbuildinfo
 next-env.d.ts
 
+# python
+__pycache__/
+*.py[cod]
+
 # macOS
 .DS_Store
