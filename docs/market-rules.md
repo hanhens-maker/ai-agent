@@ -5,6 +5,11 @@ Dutch energy-market rules, each mapped to the process trawa must build. First mo
 ## Route
 `app/market-rules/page.tsx`
 
+## Related contracts
+
+- `docs/contracts/data-contract.md`
+- `docs/contracts/api-contract.md`
+
 ## Data
 Table `market_rules` (migration in `supabase/migrations/`, data in `supabase/seed/market_rules.sql`).
 v1 content comes from the prototype at `/prototypes/nl-market-rules.html` (16 rules).

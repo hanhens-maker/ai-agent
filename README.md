@@ -12,6 +12,13 @@ npm run dev
 
 Open [http://localhost:3000/market-rules](http://localhost:3000/market-rules).
 
+## Documentation
+
+- System map: [`docs/Architecture.md`](docs/Architecture.md)
+- Market rules module: [`docs/market-rules.md`](docs/market-rules.md)
+- Data contract: [`docs/contracts/data-contract.md`](docs/contracts/data-contract.md)
+- API contract: [`docs/contracts/api-contract.md`](docs/contracts/api-contract.md)
+
 ## Checks
 
 ```bash
