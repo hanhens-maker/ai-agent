@@ -1,3 +1,10 @@
+-- LEGACY, UNVERIFIED SEED. Not for publication.
+-- rule_text is paraphrased, not literal source text, and checked_at is one date per rule.
+-- Rows must be re-reviewed against source versions before the data contract adopts them
+-- (see docs/contracts/data-contract.md).
+-- Scope is B2B electricity only. R07 (gas-only) was removed; rule ids are never reused.
+-- Rows with kind 'opp' are sales opportunities, outside the compliance contract. The UI hides them.
+
 insert into public.market_rules (
   id,
   title,
@@ -126,25 +133,6 @@ values
       'Imbalance cost tracking'
     ],
     '[{"label":"Business.gov.nl: balancing responsibility","url":"https://business.gov.nl/regulations/balancing-responsibility-electricity-supply/"},{"label":"TenneT: BRP","url":"https://www.tennet.eu/nl-en/balance-responsible-party-brp"}]'::jsonb,
-    false,
-    '2026-11-21'
-  ),
-  (
-    'R07',
-    'Gas: shipper relation and GTS registration',
-    'must',
-    'balancing',
-    'in_force',
-    null,
-    'high',
-    'A gas supplier always works with a shipper that buys and delivers the gas. After EDSN registration, the supplier registers with Gasunie Transport Services. GTS invoices licensed small-user suppliers for Peak Supply.',
-    'Gas needs its own wholesale partner and cost line.',
-    array[
-      'Select shipper',
-      'GTS supplier registration form',
-      'Budget Peak Supply cost (small-user clients)'
-    ],
-    '[{"label":"GTS: suppliers","url":"https://www.gasunietransportservices.nl/en/suppliers"}]'::jsonb,
     false,
     '2026-11-21'
   ),
