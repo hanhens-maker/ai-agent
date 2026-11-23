@@ -34,8 +34,11 @@ def build(report):
             quote = "".join(paragraph.itertext()).strip()
             if not quote:
                 raise ValueError(f"Empty quote for article {number}")
+            anchor = article.attrib["bwb-ng-variabel-deel"].strip("/").replace("/", "_")
+            reader_url = f"{url.rstrip('/')}/{doc['valid_from']}#{anchor}"
             passages.append(dict(article=number, title=article.findtext("kop/titel"),
-                                 quote=quote, url=doc["document_url"], checked=doc["checked_at"]))
+                                 quote=quote, url=reader_url, content_url=doc["document_url"],
+                                 checked=doc["checked_at"]))
     if {p["article"] for p in passages} != {"2.5", "2.17", "2.32"}:
         raise ValueError("Expected Energiewet supplier articles missing")
     return dict(asOf=report["as_of"], sources=sources, passages=passages)

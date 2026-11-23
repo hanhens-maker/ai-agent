@@ -185,7 +185,7 @@ function radarRows(report: typeof snapshot): MarketRule[] {
       ...shared, id: "article-" + p.article, title: "Energiewet · Artikel " + p.article,
       kind: "excerpt", status: "For review" as const, process: processByArticle[p.article] ?? "unmapped",
       rule_text: p.quote, impact_text: p.title, key_date: null, checked_at: p.checked.slice(0, 10),
-      sources: [{ label: "Official article (XML)", url: p.url }]
+      sources: [{ label: "Read article " + p.article + " on wetten.overheid.nl", url: p.url }]
     })),
     ...report.sources.map(s => ({
       ...shared, id: s.source_url, title: s.title, kind: s.document_kind, status: "Collected" as const,
