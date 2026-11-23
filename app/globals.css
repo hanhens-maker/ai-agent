@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fffdf7;
   --foreground: #062417;
+  --cream-50: #fffdf7;
+  --cream-100: #fbf7eb;
+  --cream-200: #f4eddc;
   --green-50: #e4fcf2;
   --green-100: #cdfde9;
   --green-200: #9bf3cf;
@@ -40,8 +43,8 @@ a {
 }
 
 ::selection {
-  background: #d7dce2;
-  color: #20252b;
+  background: var(--green-300);
+  color: var(--green-950);
 }
 
 html {
@@ -54,30 +57,30 @@ html {
   gap: 0.75rem;
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
-  color: #333a43;
+  color: var(--green-800);
   transition:
     background-color 150ms ease,
     color 150ms ease;
 }
 
 .market-nav-link:hover {
-  background: #eef0f2;
-  color: #20252b;
+  background: var(--green-50);
+  color: var(--green-950);
 }
 
 .market-nav-link-active {
-  background: #e9ebee;
-  color: #20252b;
+  background: var(--green-100);
+  color: var(--green-950);
   font-weight: 600;
 }
 
 .market-panel {
-  border: 1px solid #c8cdd3;
+  border: 1px solid var(--green-200);
   border-radius: 1rem;
   background:
-    radial-gradient(circle at 82% 0%, rgb(255 255 255 / 85%) 0, transparent 38%),
-    linear-gradient(135deg, #e7e9ec 0%, #f5f6f7 100%);
-  box-shadow: 0 12px 34px rgb(32 37 43 / 7%);
+    radial-gradient(circle at 82% 0%, rgb(255 253 247 / 75%) 0, transparent 38%),
+    linear-gradient(135deg, var(--green-100) 0%, var(--green-200) 58%, var(--green-400) 100%);
+  box-shadow: 0 16px 42px rgb(12 71 47 / 12%);
 }
 
 .market-section-title {
@@ -85,6 +88,16 @@ html {
   line-height: 2rem;
   font-weight: 650;
   letter-spacing: -0.035em;
+  color: var(--green-950);
+}
+
+.market-section-banner {
+  border: 1px solid var(--green-200);
+  border-radius: 0.9rem;
+  background:
+    radial-gradient(circle at 90% 0%, rgb(255 253 247 / 68%) 0, transparent 38%),
+    linear-gradient(120deg, var(--green-100) 0%, var(--green-50) 68%, var(--cream-50) 100%);
+  padding: 0.9rem 1rem;
 }
 
 .market-kicker {
@@ -93,19 +106,19 @@ html {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #6d7580;
+  color: var(--green-600);
 }
 
 .market-outline-button {
   min-height: 2.5rem;
-  border: 1px solid #b7bec6;
+  border: 1px solid var(--green-800);
   border-radius: 0.75rem;
-  background: rgb(255 255 255 / 82%);
+  background: rgb(255 253 247 / 88%);
   padding: 0.5rem 1.1rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 600;
-  color: #20252b;
+  color: var(--green-950);
   transition:
     border-color 150ms ease,
     background-color 150ms ease,
@@ -113,39 +126,39 @@ html {
 }
 
 .market-outline-button:hover {
-  border-color: #59616b;
-  background: #fff;
+  border-color: var(--green-950);
+  background: var(--cream-50);
   transform: translateY(-1px);
 }
 
 .market-outline-button:focus-visible,
 .market-nav-link:focus-visible {
-  outline: 2px solid #20252b;
+  outline: 2px solid var(--green-950);
   outline-offset: 2px;
 }
 
 .market-table-shell {
-  border: 1px solid #c8cdd3;
+  border: 1px solid var(--green-200);
   border-radius: 0.75rem;
-  background: #fff;
-  box-shadow: 0 8px 24px rgb(32 37 43 / 5%);
+  background: var(--cream-50);
+  box-shadow: 0 8px 24px rgb(12 71 47 / 6%);
 }
 
 .market-table-shell th {
-  background: #e9ebee;
+  background: var(--green-100);
   padding: 0.7rem 1rem;
   font-weight: 650;
-  color: #20252b;
+  color: var(--green-950);
 }
 
 .market-table-shell td {
-  border-top: 1px solid #d7dce2;
+  border-top: 1px solid var(--green-100);
   padding: 0.65rem 1rem;
-  color: #454c55;
+  color: var(--green-800);
 }
 
 .market-table-shell tbody tr:hover {
-  background: #f7f8f9;
+  background: var(--green-50);
 }
 
 .palette-wash {

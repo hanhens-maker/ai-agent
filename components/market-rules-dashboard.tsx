@@ -79,7 +79,7 @@ function SelectFilter<T extends string>({
     <label className="relative min-w-40 flex-1 sm:flex-none">
       <span className="sr-only">{label}</span>
       <select
-        className="h-10 w-full appearance-none rounded-xl border border-[#d7dce2] bg-white pl-3 pr-9 text-sm font-medium text-[#20252b] outline-none transition hover:border-[#9aa3ad] focus:border-[#20252b] focus:ring-2 focus:ring-[#20252b]/10"
+        className="h-10 w-full appearance-none rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] pl-3 pr-9 text-sm font-medium text-[#062417] outline-none transition hover:border-[#2AA370] focus:border-[#0C472F] focus:ring-2 focus:ring-[#6EEEBA]/60"
         value={value}
         onChange={(event) => onChange(event.target.value as FilterValue<T>)}
       >
@@ -90,7 +90,7 @@ function SelectFilter<T extends string>({
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#6d7580]" />
+      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#0C472F]" />
     </label>
   );
 }
@@ -99,7 +99,7 @@ function StatusPill({ status }: { status: MarketRuleStatus }) {
   const isInForce = status === "in_force";
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e9ebee] px-2.5 py-1 text-xs font-medium text-[#20252b]">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CDFDE9] px-2.5 py-1 text-xs font-medium text-[#062417]">
       {isInForce ? <CheckIcon className="size-3.5" /> : <ClockIcon className="size-3.5" />}
       {isInForce ? "In force" : "Coming"}
     </span>
@@ -111,10 +111,10 @@ function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
     <span
       className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
         impact === "high"
-          ? "border-[#20252b] bg-[#20252b] text-white"
+          ? "border-[#062417] bg-[#062417] text-white"
           : impact === "medium"
-            ? "border-[#b7bec6] bg-[#f1f2f4] text-[#20252b]"
-            : "border-[#d7dce2] bg-white text-[#59616b]"
+            ? "border-[#6EEEBA] bg-[#CDFDE9] text-[#0C472F]"
+            : "border-[#9BF3CF] bg-[#FFFDF7] text-[#0C472F]"
       }`}
     >
       {impactLabels[impact]}
@@ -124,33 +124,33 @@ function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
 
 function RuleDetails({ rule }: { rule: MarketRule }) {
   return (
-    <div className="grid gap-6 border-t border-[#d7dce2] bg-[#f7f8f9] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
+    <div className="grid gap-6 border-t border-[#CDFDE9] bg-[#FBF7EB] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
       <div>
         <p className="market-kicker">What the rule says</p>
-        <p className="mt-2 text-sm leading-6 text-[#454c55]">{rule.rule_text}</p>
+        <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.rule_text}</p>
 
         <p className="market-kicker mt-5">What this means for trawa</p>
-        <p className="mt-2 text-sm leading-6 text-[#454c55]">{rule.impact_text}</p>
+        <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.impact_text}</p>
 
-        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#6d7580]">
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#2AA370]">
           <span>Checked {formatDate(rule.checked_at)}</span>
           {rule.check ? (
-            <span className="rounded-full border border-[#c8cdd3] bg-white px-2 py-1 font-medium text-[#454c55]">
+            <span className="rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-2 py-1 font-medium text-[#0C472F]">
               Secondary source — re-check
             </span>
           ) : null}
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#d7dce2] bg-white p-4">
+      <div className="rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] p-4">
         <p className="market-kicker flex items-center gap-2">
           <SparkIcon className="size-4" />
           Suggested process steps
         </p>
         <ol className="mt-3 space-y-3">
           {rule.steps.map((step, index) => (
-            <li key={step} className="flex gap-3 text-sm leading-5 text-[#454c55]">
-              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#20252b] text-[11px] font-semibold text-white">
+            <li key={step} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#0C472F] text-[11px] font-semibold text-white">
                 {index + 1}
               </span>
               {step}
@@ -158,7 +158,7 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
           ))}
         </ol>
 
-        <div className="mt-5 border-t border-[#e3e6e9] pt-4">
+        <div className="mt-5 border-t border-[#CDFDE9] pt-4">
           <p className="market-kicker">Evidence / sources</p>
           <div className="mt-2 flex flex-col items-start gap-2">
             {rule.sources.map((source) => (
@@ -167,7 +167,7 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
                 href={source.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#20252b] underline decoration-[#aab0b8] underline-offset-4 hover:decoration-[#20252b]"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
               >
                 {source.label}
                 <ArrowUpRightIcon className="size-3.5" />
@@ -278,11 +278,11 @@ export function MarketRulesDashboard({
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f5f6] text-[#20252b]">
-      <header className="sticky top-0 z-40 border-b border-[#d7dce2] bg-white/95 backdrop-blur lg:hidden">
+    <div className="min-h-screen bg-[#FFFDF7] text-[#062417]">
+      <header className="sticky top-0 z-40 border-b border-[#CDFDE9] bg-[#FFFDF7]/95 backdrop-blur lg:hidden">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           <a href="#top" className="flex items-center gap-3 font-semibold tracking-[-0.02em]">
-            <span className="grid size-9 place-items-center rounded-xl bg-[#eef0f2]">
+            <span className="grid size-9 place-items-center rounded-xl bg-[#CDFDE9] text-[#0C472F]">
               <BoltIcon className="size-5" />
             </span>
             Netherlands GTM Dashboard
@@ -291,14 +291,14 @@ export function MarketRulesDashboard({
             type="button"
             aria-label={mobileNavigationOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={mobileNavigationOpen}
-            className="grid size-10 place-items-center rounded-xl border border-[#d7dce2] bg-white"
+            className="grid size-10 place-items-center rounded-xl border border-[#9BF3CF] bg-[#FFFDF7]"
             onClick={() => setMobileNavigationOpen((current) => !current)}
           >
             {mobileNavigationOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
           </button>
         </div>
         {mobileNavigationOpen ? (
-          <nav className="grid gap-1 border-t border-[#e3e6e9] bg-white p-3 text-sm">
+          <nav className="grid gap-1 border-t border-[#CDFDE9] bg-[#FFFDF7] p-3 text-sm">
             <a href="#top" className="market-nav-link market-nav-link-active" onClick={() => setMobileNavigationOpen(false)}>
               <HomeIcon className="size-5" /> Overview
             </a>
@@ -315,9 +315,9 @@ export function MarketRulesDashboard({
         ) : null}
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#d7dce2] bg-[#f7f8f9] px-3 py-7 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[250px] flex-col border-r border-[#CDFDE9] bg-[#FBF7EB] px-3 py-7 lg:flex">
         <a href="#top" className="flex items-center gap-3 px-2">
-          <span className="grid size-11 place-items-center rounded-xl bg-[#e9ebee]">
+          <span className="grid size-11 place-items-center rounded-xl bg-[#CDFDE9] text-[#0C472F]">
             <BoltIcon className="size-6" />
           </span>
           <span className="text-[17px] font-semibold leading-5 tracking-[-0.025em]">
@@ -341,9 +341,9 @@ export function MarketRulesDashboard({
           </a>
         </nav>
 
-        <div className="mt-auto rounded-xl border border-[#d7dce2] bg-white p-4">
+        <div className="mt-auto rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] p-4">
           <p className="text-sm font-semibold">Market scope</p>
-          <p className="mt-1.5 text-xs leading-5 text-[#6d7580]">
+          <p className="mt-1.5 text-xs leading-5 text-[#0C472F]/70">
             B2B · SME + mid-market
             <br />
             Power + gas · Netherlands
@@ -357,11 +357,11 @@ export function MarketRulesDashboard({
             <h1 className="text-[30px] font-semibold leading-tight tracking-[-0.045em] sm:text-[38px]">
               Netherlands market &amp; compliance overview
             </h1>
-            <p className="mt-1 text-base text-[#59616b] sm:text-lg">
+            <p className="mt-1 text-base text-[#0C472F]/75 sm:text-lg">
               Energy market entry, supplier setup and regulatory compliance in the Netherlands
             </p>
             {isMockData ? (
-              <p className="mt-3 inline-flex rounded-full border border-[#c8cdd3] bg-white px-3 py-1 text-xs font-medium text-[#59616b]">
+              <p className="mt-3 inline-flex rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-3 py-1 text-xs font-medium text-[#0C472F]/75">
                 Temporary interface data · verified backend content pending
               </p>
             ) : null}
@@ -369,29 +369,29 @@ export function MarketRulesDashboard({
 
           <section className="market-panel mt-7 overflow-hidden" aria-labelledby="attention-title">
             <div className="flex flex-wrap items-center gap-3 px-4 py-4 sm:px-5">
-              <span className="grid size-9 place-items-center rounded-xl bg-white shadow-sm ring-1 ring-[#e3e6e9]">
+              <span className="grid size-9 place-items-center rounded-xl bg-[#FFFDF7] text-[#0C472F] shadow-sm ring-1 ring-[#9BF3CF]">
                 <BellIcon className="size-5" />
               </span>
               <h2 id="attention-title" className="text-xl font-semibold tracking-[-0.025em]">
                 Needs attention
               </h2>
-              <span className="text-sm text-[#59616b]">
+              <span className="text-sm text-[#0C472F]/75">
                 {attentionRules.length} {attentionRules.length === 1 ? "item" : "items"} to review
               </span>
             </div>
 
-            <div className="mx-2 mb-2 overflow-hidden rounded-xl border border-white bg-white/80">
+            <div className="mx-2 mb-2 overflow-hidden rounded-xl border border-[#9BF3CF] bg-[#FFFDF7]/90">
               {attentionRules.slice(0, 4).map((rule) => (
                 <div
                   key={rule.id}
-                  className="grid gap-3 border-b border-[#d7dce2] px-3 py-3 last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:items-center"
+                  className="grid gap-3 border-b border-[#CDFDE9] px-3 py-3 last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:items-center"
                 >
-                  <span className="hidden size-10 place-items-center rounded-xl border border-[#c8cdd3] bg-[#f7f8f9] sm:grid">
+                  <span className="hidden size-10 place-items-center rounded-xl border border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F] sm:grid">
                     {rule.status === "coming" ? <ClockIcon className="size-5" /> : <CheckIcon className="size-5" />}
                   </span>
                   <span className="min-w-0">
                     <span className="block font-semibold leading-5">{rule.title}</span>
-                    <span className="mt-0.5 block truncate text-sm text-[#59616b]">
+                    <span className="mt-0.5 block truncate text-sm text-[#0C472F]/70">
                       {processLabels[rule.process]} · {rule.impact_text}
                     </span>
                   </span>
