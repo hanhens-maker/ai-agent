@@ -162,6 +162,33 @@ html {
   background: var(--green-50);
 }
 
+@media (max-width: 639px) {
+  .market-nav-link {
+    gap: 0.625rem;
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .market-panel {
+    border-radius: 1.25rem;
+  }
+
+  .market-section-title {
+    font-size: 1.25rem;
+    line-height: 1.6rem;
+  }
+
+  .market-section-banner {
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .market-table-shell {
+    border-radius: 1rem;
+  }
+}
+
 .palette-wash {
   background:
     radial-gradient(circle at 10% 0%, rgb(255 255 255 / 55%) 0, transparent 38%),
