@@ -177,6 +177,8 @@ Only reviewed, current and source-backed obligations belong here.
 | `id` | Stable UUID used by the frontend |
 | `title` | Reviewed display title |
 | `description` | Literal source quotation; never a summary |
+| `relevance_summary` | Short reviewed internal meaning used in list rows; not source text |
+| `relevance_note` | Optional longer internal relevance explanation used in detail |
 | `process` | `licence`, `risk`, `balancing`, `data`, `billing`, `customer`, `reporting`, `sales` |
 | `activities` | `supply`, `manage`, `flex`, `trading` |
 | `impact` | `high`, `medium`, `low`; operational priority, not legal severity |
@@ -295,8 +297,18 @@ export interface SourceCitation {
 
 export interface ActionProgress {
   total: number;
+  open: number; // not_started, in_progress or blocked
   completed: number;
   blocked: number;
+}
+
+export interface ProcessSummary {
+  process: RequirementProcess;
+  total: number;
+  active: number;
+  upcoming: number;
+  highImpact: number;
+  nextEffectiveFrom: ISODate | null;
 }
 
 export interface ComplianceOverview {
@@ -306,6 +318,11 @@ export interface ComplianceOverview {
     needsScopeConfirmation: number;
   };
   actions: ActionProgress;
+  processes: ProcessSummary[];
+  capabilities: {
+    canReview: boolean;
+    canUpdateActions: boolean;
+  };
   pendingChanges: number;
   lastSuccessfulCollectionAt: ISODateTime | null;
   nextScheduledCollectionAt: ISODateTime | null;
@@ -315,6 +332,7 @@ export interface ComplianceRequirementSummary {
   id: UUID;
   title: string;
   description: string; // literal source quotation
+  relevanceSummary: string | null; // reviewed internal meaning; never source text
   process: RequirementProcess;
   activities: TrawaActivity[];
   impact: Impact;
@@ -438,6 +456,7 @@ export interface AuditEvent {
 export interface PageInfo {
   nextCursor: string | null;
   hasNextPage: boolean;
+  total: number; // exact count after filters, before pagination
 }
 
 export interface Page<T> {
@@ -573,7 +592,18 @@ Every response below is sample contract data, not a legal statement or a verifie
 {
   "data": {
     "requirements": { "active": 8, "upcoming": 2, "needsScopeConfirmation": 1 },
-    "actions": { "total": 24, "completed": 9, "blocked": 2 },
+    "actions": { "total": 24, "open": 13, "completed": 9, "blocked": 2 },
+    "processes": [
+      {
+        "process": "licence",
+        "total": 1,
+        "active": 1,
+        "upcoming": 0,
+        "highImpact": 1,
+        "nextEffectiveFrom": null
+      }
+    ],
+    "capabilities": { "canReview": false, "canUpdateActions": false },
     "pendingChanges": 1,
     "lastSuccessfulCollectionAt": "2026-10-01T06:30:00Z",
     "nextScheduledCollectionAt": "2027-01-01T06:30:00Z"
@@ -594,6 +624,7 @@ Every response below is sample contract data, not a legal statement or a verifie
       "id": "50000000-0000-4000-8000-000000000001",
       "title": "Sample electricity-market requirement",
       "description": "SAMPLE DATA — a literal quotation from the cited current source version appears here.",
+      "relevanceSummary": "SAMPLE DATA — reviewed internal meaning for the list row.",
       "process": "data",
       "activities": ["supply", "manage"],
       "impact": "high",
@@ -618,13 +649,13 @@ Every response below is sample contract data, not a legal statement or a verifie
         "checkedAt": "2026-11-22T09:00:00Z",
         "primary": true
       },
-      "actionProgress": { "total": 3, "completed": 1, "blocked": 0 },
+      "actionProgress": { "total": 3, "open": 2, "completed": 1, "blocked": 0 },
       "reviewedAt": "2026-11-22T10:00:00Z",
       "updatedAt": "2026-11-22T10:00:00Z",
       "revision": 1
     }
   ],
-  "pageInfo": { "nextCursor": null, "hasNextPage": false },
+  "pageInfo": { "nextCursor": null, "hasNextPage": false, "total": 1 },
   "meta": {
     "requestId": "sample-request-requirements",
     "generatedAt": "2026-11-22T12:00:00Z"
@@ -654,7 +685,7 @@ Every response below is sample contract data, not a legal statement or a verifie
       "revision": 1
     }
   ],
-  "pageInfo": { "nextCursor": null, "hasNextPage": false },
+  "pageInfo": { "nextCursor": null, "hasNextPage": false, "total": 1 },
   "meta": {
     "requestId": "sample-request-changes",
     "generatedAt": "2026-11-22T12:00:00Z"
@@ -684,7 +715,7 @@ Every response below is sample contract data, not a legal statement or a verifie
       "revision": 1
     }
   ],
-  "pageInfo": { "nextCursor": null, "hasNextPage": false },
+  "pageInfo": { "nextCursor": null, "hasNextPage": false, "total": 1 },
   "meta": {
     "requestId": "sample-request-actions",
     "generatedAt": "2026-11-22T12:00:00Z"
@@ -700,6 +731,7 @@ Every response below is sample contract data, not a legal statement or a verifie
     "id": "50000000-0000-4000-8000-000000000001",
     "title": "Sample electricity-market requirement",
     "description": "SAMPLE DATA — a literal quotation from the cited current source version appears here.",
+    "relevanceSummary": "SAMPLE DATA — reviewed internal meaning for the list row.",
     "process": "data",
     "activities": ["supply", "manage"],
     "impact": "high",
@@ -726,7 +758,7 @@ Every response below is sample contract data, not a legal statement or a verifie
       "primary": true
     },
     "sources": [],
-    "actionProgress": { "total": 1, "completed": 0, "blocked": 0 },
+    "actionProgress": { "total": 1, "open": 1, "completed": 0, "blocked": 0 },
     "actions": [],
     "auditTrail": [],
     "reviewedAt": "2026-11-22T10:00:00Z",
@@ -748,6 +780,7 @@ The frontend and backend agents must agree on these points before any migration 
 |---|---|---|
 | Publication gate | Default UI shows only `verified` requirements | Auto-publishing unreviewed extraction would blur source changes and verified obligations |
 | API boundary | Next.js `/api/v1/*` route handlers return camelCase DTOs | Prevents database schema leakage into components |
+| UI integration | Module doc owns interaction intent; data and API contracts own backend compatibility | Avoids a duplicate design contract for one screen |
 | Activities | Fixed enum: supply, manage, flex, trading | Matches `docs/company.md`; gas is excluded |
 | Process taxonomy | Retain the existing eight process values for the first version | Avoids redesigning current filters; frontend can also filter by activity |
 | Opportunities | Remove `kind=opp` from this compliance contract | Sales opportunities are not compliance obligations and need a separate future contract |

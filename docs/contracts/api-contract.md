@@ -52,7 +52,8 @@ Collection:
   "data": [],
   "pageInfo": {
     "nextCursor": null,
-    "hasNextPage": false
+    "hasNextPage": false,
+    "total": 0
   },
   "meta": {
     "requestId": "request-id",
@@ -99,6 +100,74 @@ The public resources are:
 
 The API does not return an `isCompliant` field.
 
+## UI/UX compatibility
+
+The current dashboard can use this API after replacing its legacy `MarketRule` data flow and the interactions listed below.
+
+No separate design contract is needed for this module.
+
+- `docs/market-rules.md` owns screen purpose, labels and interaction intent.
+- `data-contract.md` owns domain fields and DTO shapes.
+- This file owns request, response and state-transition behavior.
+
+Create a separate design contract only when several screens share a complex interaction pattern or when a design system needs versioned component behavior.
+
+### Screen-to-endpoint map
+
+| UI area | API source | Required behavior |
+|---|---|---|
+| Needs attention | `GET /api/v1/action-items?status=not_started,in_progress,blocked&sort=due_date_asc` | Show action items, not requirement-level completion |
+| Attention totals | `GET /api/v1/compliance/overview` | Use `actions.open`; do not count the current page locally |
+| Supplier prerequisites | `GET /api/v1/requirements?process=licence,balancing,data,billing` | Render verified requirements and their primary source |
+| Market rules radar | `GET /api/v1/requirements` | Send search, filters, sort and cursor to the server |
+| Expanded rule | `GET /api/v1/requirements/:id` | Load citations, relevance, actions and audit data on demand |
+| Regional grid | `GET /api/v1/compliance/overview` | Render the server-computed `processes` aggregates |
+
+### Legacy UI mapping
+
+| Current `MarketRule` field | API field or decision |
+|---|---|
+| `id` | `id` |
+| `title` | `title` |
+| `kind=must` | Published compliance requirement; no field required |
+| `kind=opp` | Not part of this API; remove the filter or build a future opportunities contract |
+| `process` | `process` |
+| `status=in_force` | `lifecycleStatus=active` |
+| `status=coming` | `lifecycleStatus=upcoming` |
+| `key_date` | `effectiveFrom`; show “Ongoing” when null |
+| `impact` | `impact` |
+| `rule_text` | `description` |
+| `impact_text` | `relevanceSummary` in lists; `relevanceNote` in detail |
+| `steps` | `actions`; status and completion are persisted per action |
+| `sources` | `primarySource` in lists; `sources` in detail |
+| `check` | Remove; unverified evidence is not published by default |
+| `checked_at` | `primarySource.checkedAt` |
+
+### Interaction states
+
+- Initial list loads show a skeleton, not an empty-state message.
+- Filter and search changes reset the cursor and request page one.
+- Search is server-side and debounced.
+- “Showing” uses the returned item count and `pageInfo.total`.
+- “Load more” appends the next cursor page without changing active filters.
+- Expanding a rule fetches detail once and caches it for the current page session.
+- A detail failure leaves the row open with an inline retry action.
+- A list failure keeps filters visible and shows a retry action.
+- A valid empty response shows the existing clear-filters state.
+- Action completion uses `PATCH /api/v1/action-items/:id`.
+- Only render an enabled action control when `capabilities.canUpdateActions` is true.
+- Viewers see action status without a mutation control.
+- Optimistic action updates roll back on failure.
+- `409 CONFLICT` refetches the action and explains that another reviewer changed it.
+
+### Scope guard
+
+The proposed compliance API is electricity-only.
+
+The UI must not display “Power + gas” when rendering this API.
+
+Gas and sales opportunities require separate scope and evidence decisions before they appear in the same navigation.
+
 ## Read endpoints
 
 | Endpoint | Purpose | Filters |
@@ -131,6 +200,7 @@ Historical or superseded evidence requires an authorized audit request and is ne
 - The cursor contains the selected sort key and the record ID.
 - Offset pagination is not exposed.
 - A cursor cannot be reused with different filters or sort order.
+- `pageInfo.total` is the exact count after filters and before pagination.
 
 ### Filters
 
