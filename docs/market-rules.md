@@ -13,7 +13,7 @@ Dutch energy-market rules, each mapped to the process trawa must build. First mo
 ## Current prototype data
 
 Table `market_rules` (migration in `supabase/migrations/`, data in `supabase/seed/market_rules.sql`).
-v1 content comes from the prototype at `/prototypes/nl-market-rules.html` (16 rules).
+The page currently renders local mock data from `lib/data/market-rules.ts`. It does not read the table or `supabase/seed/market_rules.sql`. The seed holds 15 legacy, unverified rules (R07 removed: gas-only).
 
 | Field | Type | Rule |
 |---|---|---|
@@ -77,7 +77,7 @@ Add a design contract only when multiple modules reuse a complex component or in
 - In the prototype, `rule_text` states the source and `steps` are suggested work.
 - In the target UI, `description` is literal evidence and `actions` are operational work.
 - Target backend scope: B2B electricity only (SME + mid-market).
-- The current “Power + gas” UI label must change before backend integration.
+- The UI label reads “Electricity · Netherlands”. The type filter and the sales process are hidden in the UI.
 - Target filters: process, activity, impact, lifecycle and search.
 - Sales opportunities do not use the compliance endpoint.
 - Lifecycle changes come from reviewed source evidence, not from a client-side date check.

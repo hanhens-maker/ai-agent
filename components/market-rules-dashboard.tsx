@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import type {
   MarketRule,
   MarketRuleImpact,
-  MarketRuleKind,
   MarketRuleProcess,
   MarketRuleStatus,
 } from "@/lib/data/market-rules";
@@ -28,6 +27,8 @@ import {
 
 type FilterValue<T extends string> = "all" | T;
 
+const complianceProcesses = marketRuleProcesses.filter((value) => value !== "sales");
+
 const processLabels: Record<MarketRuleProcess, string> = {
   licence: "Licensing & market access",
   risk: "Risk & procurement",
@@ -50,6 +51,8 @@ const processQuestions: Record<MarketRuleProcess, string> = {
   sales: "Which client rule opens a deal?",
 };
 
+const impactRank: Record<MarketRuleImpact, number> = { high: 0, medium: 1, low: 2 };
+
 const impactLabels: Record<MarketRuleImpact, string> = {
   high: "High impact",
   medium: "Medium impact",
@@ -61,7 +64,8 @@ function formatDate(date: string) {
     day: "numeric",
     month: "short",
     year: "numeric",
-  }).format(new Date(`${date}T00:00:00`));
+    timeZone: "UTC",
+  }).format(new Date(`${date.slice(0, 10)}T00:00:00Z`));
 }
 
 function SelectFilter<T extends string>({
@@ -90,7 +94,7 @@ function SelectFilter<T extends string>({
           </option>
         ))}
       </select>
-      <ChevronDownIcon className="pointer-events-none absolute right-3 top-3 size-4 text-[#0C472F] sm:right-3.5 sm:top-3.5" />
+      <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#0C472F] sm:right-3.5" />
     </label>
   );
 }
@@ -124,7 +128,11 @@ function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
 
 function RuleDetails({ rule }: { rule: MarketRule }) {
   return (
-    <div className="grid gap-6 border-t border-[#CDFDE9] bg-[#FBF7EB] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
+    <div
+      id={`rule-details-${rule.id}`}
+      role="region"
+      aria-label={`Details: ${rule.title}`}
+      className="grid gap-6 border-t border-[#CDFDE9] bg-[#FBF7EB] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
       <div>
         <p className="market-kicker">What the rule says</p>
         <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.rule_text}</p>
@@ -132,7 +140,7 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
         <p className="market-kicker mt-5">What this means for trawa</p>
         <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.impact_text}</p>
 
-        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#2AA370]">
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#1F7A54]">
           <span>Checked {formatDate(rule.checked_at)}</span>
           {rule.check ? (
             <span className="rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-2 py-1 font-medium text-[#0C472F]">
@@ -149,7 +157,7 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
         </p>
         <ol className="mt-3 space-y-3">
           {rule.steps.map((step, index) => (
-            <li key={step} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
+            <li key={`${index}-${step}`} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
               <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[#0C472F] text-[11px] font-semibold text-white">
                 {index + 1}
               </span>
@@ -161,9 +169,9 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
         <div className="mt-5 border-t border-[#CDFDE9] pt-4">
           <p className="market-kicker">Evidence / sources</p>
           <div className="mt-2 flex flex-col items-start gap-2">
-            {rule.sources.map((source) => (
+            {rule.sources.map((source, sourceIndex) => (
               <a
-                key={source.url}
+                key={`${sourceIndex}-${source.url}`}
                 href={source.url}
                 target="_blank"
                 rel="noreferrer"
@@ -181,21 +189,22 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
 }
 
 export function MarketRulesDashboard({
-  rules,
+  rules: allRules,
   isMockData = false,
 }: {
   rules: MarketRule[];
   isMockData?: boolean;
 }) {
+  // Compliance scope only: sales opportunities (kind "opp") and the sales process are out of scope.
+  const rules = useMemo(
+    () => allRules.filter((rule) => rule.kind === "must" && rule.process !== "sales"),
+    [allRules],
+  );
   const [search, setSearch] = useState("");
   const [process, setProcess] = useState<FilterValue<MarketRuleProcess>>("all");
-  const [kind, setKind] = useState<FilterValue<MarketRuleKind>>("all");
   const [status, setStatus] = useState<FilterValue<MarketRuleStatus>>("all");
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
-  const [completedAttentionRules, setCompletedAttentionRules] = useState<Set<string>>(
-    () => new Set(),
-  );
 
   const filteredRules = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -211,43 +220,46 @@ export function MarketRulesDashboard({
       return (
         matchesSearch &&
         (process === "all" || rule.process === process) &&
-        (kind === "all" || rule.kind === kind) &&
         (status === "all" || rule.status === status)
       );
     });
-  }, [kind, process, rules, search, status]);
+  }, [process, rules, search, status]);
 
   const attentionRules = useMemo(
     () =>
       [...rules]
         .filter(
           (rule) =>
-            rule.kind === "must" &&
-            (rule.impact === "high" || rule.status === "coming"),
+            rule.impact === "high" || rule.status === "coming",
         )
         .sort((first, second) => {
           if (first.impact === "high" && second.impact !== "high") return -1;
           if (first.impact !== "high" && second.impact === "high") return 1;
-          return (first.key_date ?? "9999").localeCompare(second.key_date ?? "9999");
+          if (!first.key_date && !second.key_date) return 0;
+          if (!first.key_date) return 1;
+          if (!second.key_date) return -1;
+          return first.key_date.localeCompare(second.key_date);
         }),
     [rules],
   );
 
   const prerequisiteRules = useMemo(
     () =>
-      rules
-        .filter((rule) => ["licence", "balancing", "data", "billing"].includes(rule.process))
-        .slice(0, 5),
+      // One row per prerequisite process, highest impact first.
+      (["licence", "balancing", "data", "billing"] as const).flatMap((processName) => {
+        const best = rules
+          .filter((rule) => rule.process === processName)
+          .sort((first, second) => impactRank[first.impact] - impactRank[second.impact])[0];
+        return best ? [best] : [];
+      }),
     [rules],
   );
 
-  const remainingAttentionCount = attentionRules.filter(
-    (rule) => !completedAttentionRules.has(rule.id),
-  ).length;
+  const attentionCount = attentionRules.length;
 
   const processSummaries = useMemo(
     () =>
-      marketRuleProcesses.map((processName) => {
+      complianceProcesses.map((processName) => {
         const processRules = rules.filter((rule) => rule.process === processName);
         const nextDate = processRules
           .map((rule) => rule.key_date)
@@ -267,7 +279,6 @@ export function MarketRulesDashboard({
   function clearFilters() {
     setSearch("");
     setProcess("all");
-    setKind("all");
     setStatus("all");
   }
 
@@ -281,15 +292,6 @@ export function MarketRulesDashboard({
           block: "center",
         });
       });
-    });
-  }
-
-  function setAttentionRuleCompleted(ruleId: string, completed: boolean) {
-    setCompletedAttentionRules((current) => {
-      const next = new Set(current);
-      if (completed) next.add(ruleId);
-      else next.delete(ruleId);
-      return next;
     });
   }
 
@@ -362,7 +364,7 @@ export function MarketRulesDashboard({
           <p className="mt-1.5 text-xs leading-5 text-[#0C472F]/70">
             B2B · SME + mid-market
             <br />
-            Power + gas · Netherlands
+            Electricity · Netherlands
           </p>
         </div>
       </aside>
@@ -392,40 +394,30 @@ export function MarketRulesDashboard({
                 Needs attention
               </h2>
               <span className="text-xs text-[#0C472F]/75 sm:text-sm">
-                {remainingAttentionCount} {remainingAttentionCount === 1 ? "item" : "items"} to review
+                {attentionCount} {attentionCount === 1 ? "item" : "items"} to review
               </span>
             </div>
 
             <div className="mx-1.5 mb-1.5 overflow-hidden rounded-[15px] border border-[#9BF3CF] bg-[#FFFDF7]/90 sm:mx-2 sm:mb-2 sm:rounded-xl">
-              {attentionRules.slice(0, 4).map((rule) => (
+              {attentionRules.map((rule) => (
                 <div
                   key={rule.id}
-                  className={`grid grid-cols-[36px_minmax(0,1fr)_36px] items-center gap-2 border-b border-[#CDFDE9] px-2.5 py-2.5 transition last:border-b-0 sm:grid-cols-[44px_1fr_auto] sm:gap-3 sm:px-3 sm:py-3 ${completedAttentionRules.has(rule.id) ? "bg-[#E4FCF2]/70" : ""}`}
+                  className="grid grid-cols-[minmax(0,1fr)_36px] items-center gap-2 border-b border-[#CDFDE9] px-2.5 py-2.5 transition last:border-b-0 sm:grid-cols-[1fr_auto] sm:gap-3 sm:px-3 sm:py-3"
                 >
-                  <label className="grid size-9 cursor-pointer place-items-center rounded-lg border border-[#9BF3CF] bg-[#E4FCF2] text-[#0C472F] transition hover:border-[#2AA370] sm:size-10 sm:rounded-xl">
-                    <span className="sr-only">Mark {rule.title} complete</span>
-                    <input
-                      type="checkbox"
-                      className="peer sr-only"
-                      checked={completedAttentionRules.has(rule.id)}
-                      onChange={(event) =>
-                        setAttentionRuleCompleted(rule.id, event.target.checked)
-                      }
-                    />
-                    <span className="grid size-[18px] place-items-center rounded-[5px] border border-[#2AA370] bg-[#FFFDF7] text-transparent transition peer-checked:bg-[#0C472F] peer-checked:text-white sm:size-5 sm:rounded-md">
-                      <CheckIcon className="size-3 sm:size-3.5" />
-                    </span>
-                  </label>
                   <span className="min-w-0">
-                    <span className={`block truncate text-[15px] font-semibold leading-5 sm:text-base ${completedAttentionRules.has(rule.id) ? "text-[#0C472F]/60 line-through" : ""}`}>{rule.title}</span>
-                    <span className="block truncate text-[13px] leading-5 text-[#0C472F]/70 sm:mt-0.5 sm:text-sm">
+                    <span className="block text-[15px] font-semibold leading-5 sm:text-base">{rule.title}</span>
+                    <span className="mt-0.5 line-clamp-2 block text-[13px] leading-5 text-[#0C472F]/70 sm:text-sm">
                       {processLabels[rule.process]} · {rule.impact_text}
+                    </span>
+                    <span className="mt-1.5 flex flex-wrap gap-1.5">
+                      <StatusPill status={rule.status} />
+                      <ImpactPill impact={rule.impact} />
                     </span>
                   </span>
                   <button
                     type="button"
                     aria-label={`Check details for ${rule.title}`}
-                    className="inline-flex size-9 items-center justify-center rounded-lg border border-[#0C472F] bg-[#FFFDF7] text-[#0C472F] transition hover:bg-[#E4FCF2] focus:outline-none focus:ring-2 focus:ring-[#29ED9B] focus:ring-offset-2 sm:h-10 sm:w-auto sm:gap-2 sm:rounded-full sm:px-4"
+                    className="inline-flex size-9 items-center justify-center rounded-lg border border-[#0C472F] bg-[#FFFDF7] text-[#0C472F] transition hover:bg-[#E4FCF2] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#29ED9B] focus-visible:ring-offset-2 sm:h-10 sm:w-auto sm:gap-2 sm:rounded-full sm:px-4"
                     onClick={() => showRule(rule)}
                   >
                     <ArrowUpRightIcon className="size-4" />
@@ -444,11 +436,11 @@ export function MarketRulesDashboard({
               <table className="w-full min-w-[820px] border-collapse text-left text-sm">
                 <thead>
                   <tr>
-                    <th>Requirement</th>
-                    <th>Process</th>
-                    <th>Status</th>
-                    <th>Evidence / link</th>
-                    <th>Key date</th>
+                    <th scope="col">Requirement</th>
+                    <th scope="col">Process</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Evidence / link</th>
+                    <th scope="col">Key date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -458,15 +450,19 @@ export function MarketRulesDashboard({
                       <td>{processLabels[rule.process]}</td>
                       <td><StatusPill status={rule.status} /></td>
                       <td>
-                        <a
-                          href={rule.sources[0]?.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 font-medium text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
-                        >
-                          {rule.sources[0]?.label ?? "No source"}
-                          <ArrowUpRightIcon className="size-3.5" />
-                        </a>
+                        {rule.sources[0]?.url.startsWith("https://") ? (
+                          <a
+                            href={rule.sources[0].url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 font-medium text-[#0C472F] underline decoration-[#6EEEBA] underline-offset-4 hover:decoration-[#0C472F]"
+                          >
+                            {rule.sources[0].label}
+                            <ArrowUpRightIcon className="size-3.5" />
+                          </a>
+                        ) : (
+                          "No source"
+                        )}
                       </td>
                       <td className="whitespace-nowrap">{rule.key_date ? formatDate(rule.key_date) : "Ongoing"}</td>
                     </tr>
@@ -484,7 +480,7 @@ export function MarketRulesDashboard({
                   Showing {filteredRules.length} of {rules.length} rules
                 </p>
               </div>
-              {(search || process !== "all" || kind !== "all" || status !== "all") ? (
+              {(search || process !== "all" || status !== "all") ? (
                 <button type="button" className="text-sm font-medium underline underline-offset-4" onClick={clearFilters}>
                   Clear filters
                 </button>
@@ -508,16 +504,7 @@ export function MarketRulesDashboard({
                   label="Processes"
                   value={process}
                   onChange={setProcess}
-                  options={marketRuleProcesses.map((value) => ({ value, label: processLabels[value] }))}
-                />
-                <SelectFilter
-                  label="Types"
-                  value={kind}
-                  onChange={setKind}
-                  options={[
-                    { value: "must", label: "Must comply" },
-                    { value: "opp", label: "Sales opportunity" },
-                  ]}
+                  options={complianceProcesses.map((value) => ({ value, label: processLabels[value] }))}
                 />
                 <SelectFilter
                   label="Statuses"
@@ -540,12 +527,17 @@ export function MarketRulesDashboard({
                       <button
                         type="button"
                         aria-expanded={expanded}
-                        className="grid w-full grid-cols-[minmax(0,1fr)_32px] items-center gap-2.5 px-3 py-3 text-left transition hover:bg-[#E4FCF2] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:gap-3 md:px-5 md:py-4"
+                        aria-controls={`rule-details-${rule.id}`}
+                        className="grid w-full grid-cols-[minmax(0,1fr)_32px] items-center gap-2.5 px-3 py-3 text-left transition hover:bg-[#E4FCF2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0C472F] md:grid-cols-[minmax(250px,1.35fr)_minmax(170px,0.8fr)_auto_auto_32px] md:gap-3 md:px-5 md:py-4"
                         onClick={() => setExpandedRule(expanded ? null : rule.id)}
                       >
                         <span className="min-w-0">
-                          <span className="block truncate text-[15px] font-semibold leading-5 sm:text-base">{rule.title}</span>
-                          <span className="block truncate text-[13px] leading-5 text-[#0C472F]/70 sm:mt-1 sm:text-sm">{rule.impact_text}</span>
+                          <span className="line-clamp-2 block text-[15px] font-semibold leading-5 sm:text-base">{rule.title}</span>
+                          <span className="line-clamp-2 block text-[13px] leading-5 text-[#0C472F]/70 sm:mt-1 sm:text-sm">{rule.impact_text}</span>
+                          <span className="mt-1.5 flex flex-wrap gap-1.5 md:hidden">
+                            <StatusPill status={rule.status} />
+                            <ImpactPill impact={rule.impact} />
+                          </span>
                         </span>
                         <span className="hidden text-sm text-[#0C472F] md:block">{processLabels[rule.process]}</span>
                         <span className="hidden md:inline-flex"><StatusPill status={rule.status} /></span>
@@ -582,11 +574,11 @@ export function MarketRulesDashboard({
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead>
                   <tr>
-                    <th>Process</th>
-                    <th>Decision question</th>
-                    <th>Rules</th>
-                    <th>High impact</th>
-                    <th>Next key date</th>
+                    <th scope="col">Process</th>
+                    <th scope="col">Decision question</th>
+                    <th scope="col">Rules</th>
+                    <th scope="col">High impact</th>
+                    <th scope="col">Next key date</th>
                   </tr>
                 </thead>
                 <tbody>
