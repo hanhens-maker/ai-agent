@@ -49,6 +49,11 @@ npm run build
 - Never use reset --hard, checkout -- or stash drop. Never discard uncommitted work.
 - On a merge conflict: stop and ask me. Don't resolve it on your own.
 
+## Coordinating across worktrees
+- After fetching, check the changed files in open PRs for overlap with the files you plan to edit. Use a draft PR to share work another agent depends on before it lands on `main`.
+- The frontend agent owns layout, styling and interactions. The data agent owns collection, extraction and mapping records into the agreed component props. Preserve the existing design when connecting data. If an open frontend PR changes those props, coordinate the mismatch on that PR before editing the shared component.
+- When a data shape changes, include a sample record, the affected component and a link to the relevant contract in the PR. Request frontend confirmation that the component can render the sample.
+
 ## After each task
 - Commit, push the branch and open a PR. Don't sync again.
 

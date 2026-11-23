@@ -1,12 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type {
-  MarketRule,
-  MarketRuleImpact,
-  MarketRuleProcess,
-  MarketRuleStatus,
-} from "@/lib/data/market-rules";
+import type { MarketRule as PrototypeRule, MarketRuleProcess } from "@/lib/data/market-rules";
+import type snapshot from "@/supabase/seed/radar-snapshot.json";
+
+type MarketRuleKind = string;
+type MarketRuleStatus = "Collected" | "For review";
+type MarketRuleImpact = "Unassessed";
+type MarketRule = Omit<PrototypeRule, "kind" | "status" | "impact" | "process"> & {
+  kind: MarketRuleKind; status: MarketRuleStatus; impact: MarketRuleImpact;
+  process: MarketRuleProcess | "unmapped";
+};
 import { marketRuleProcesses } from "@/lib/data/market-rules";
 import {
   ArrowUpRightIcon,
@@ -27,9 +31,10 @@ import {
 
 type FilterValue<T extends string> = "all" | T;
 
-const complianceProcesses = marketRuleProcesses.filter((value) => value !== "sales");
+const complianceProcesses = marketRuleProcesses.filter(value => value !== "sales");
 
-const processLabels: Record<MarketRuleProcess, string> = {
+const processLabels: Record<MarketRule["process"], string> = {
+  unmapped: "Unmapped",
   licence: "Licensing & market access",
   risk: "Risk & procurement",
   balancing: "Balancing & wholesale",
@@ -51,13 +56,7 @@ const processQuestions: Record<MarketRuleProcess, string> = {
   sales: "Which client rule opens a deal?",
 };
 
-const impactRank: Record<MarketRuleImpact, number> = { high: 0, medium: 1, low: 2 };
 
-const impactLabels: Record<MarketRuleImpact, string> = {
-  high: "High impact",
-  medium: "Medium impact",
-  low: "Low impact",
-};
 
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en-GB", {
@@ -100,12 +99,12 @@ function SelectFilter<T extends string>({
 }
 
 function StatusPill({ status }: { status: MarketRuleStatus }) {
-  const isInForce = status === "in_force";
+  const isInForce = status === "Collected";
 
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CDFDE9] px-2.5 py-1 text-xs font-medium text-[#062417]">
       {isInForce ? <CheckIcon className="size-3.5" /> : <ClockIcon className="size-3.5" />}
-      {isInForce ? "In force" : "Coming"}
+      {status}
     </span>
   );
 }
@@ -113,15 +112,9 @@ function StatusPill({ status }: { status: MarketRuleStatus }) {
 function ImpactPill({ impact }: { impact: MarketRuleImpact }) {
   return (
     <span
-      className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
-        impact === "high"
-          ? "border-[#062417] bg-[#062417] text-white"
-          : impact === "medium"
-            ? "border-[#6EEEBA] bg-[#CDFDE9] text-[#0C472F]"
-            : "border-[#9BF3CF] bg-[#FFFDF7] text-[#0C472F]"
-      }`}
+      className="inline-flex rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-2.5 py-1 text-xs font-medium text-[#0C472F]"
     >
-      {impactLabels[impact]}
+      {impact}
     </span>
   );
 }
@@ -135,9 +128,9 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
       className="grid gap-6 border-t border-[#CDFDE9] bg-[#FBF7EB] px-4 py-5 md:grid-cols-[1.15fr_0.85fr] md:px-6">
       <div>
         <p className="market-kicker">What the rule says</p>
-        <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.rule_text}</p>
+        <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.rule_text || "Open the official document to read its text."}</p>
 
-        <p className="market-kicker mt-5">What this means for trawa</p>
+        <p className="market-kicker mt-5">Source description</p>
         <p className="mt-2 text-sm leading-6 text-[#0C472F]">{rule.impact_text}</p>
 
         <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#1F7A54]">
@@ -153,8 +146,9 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
       <div className="rounded-xl border border-[#9BF3CF] bg-[#FFFDF7] p-4">
         <p className="market-kicker flex items-center gap-2">
           <SparkIcon className="size-4" />
-          Suggested process steps
+          Review checklist
         </p>
+        <p className="mt-3 text-sm">No verified action items yet.</p>
         <ol className="mt-3 space-y-3">
           {rule.steps.map((step, index) => (
             <li key={`${index}-${step}`} className="flex gap-3 text-sm leading-5 text-[#0C472F]">
@@ -188,20 +182,32 @@ function RuleDetails({ rule }: { rule: MarketRule }) {
   );
 }
 
-export function MarketRulesDashboard({
-  rules: allRules,
-  isMockData = false,
-}: {
-  rules: MarketRule[];
-  isMockData?: boolean;
-}) {
-  // Compliance scope only: sales opportunities (kind "opp") and the sales process are out of scope.
-  const rules = useMemo(
-    () => allRules.filter((rule) => rule.kind === "must" && rule.process !== "sales"),
-    [allRules],
-  );
+const kindLabels: Record<string, string> = { regulation: "Regulation", acm_code: "Market code", guidance: "Guidance", policy: "Policy", excerpt: "Article excerpt" };
+
+function radarRows(report: typeof snapshot): MarketRule[] {
+  const processByArticle: Record<string, MarketRuleProcess> = { "2.5": "customer", "2.17": "licence", "2.32": "reporting" };
+  const shared = { impact: "Unassessed" as const, steps: [], check: false };
+  return [
+    ...report.passages.map(p => ({
+      ...shared, id: "article-" + p.article, title: "Energiewet · Artikel " + p.article,
+      kind: "excerpt", status: "For review" as const, process: processByArticle[p.article] ?? "unmapped",
+      rule_text: p.quote, impact_text: p.title, key_date: null, checked_at: p.checked.slice(0, 10),
+      sources: [{ label: "Read article " + p.article + " on wetten.overheid.nl", url: p.url }]
+    })),
+    ...report.sources.map(s => ({
+      ...shared, id: s.source_url, title: s.title, kind: s.document_kind, status: "Collected" as const,
+      process: "unmapped" as const, rule_text: "", impact_text: kindLabels[s.document_kind],
+      key_date: s.valid_from, checked_at: s.checked_at.slice(0, 10),
+      sources: [{ label: "Official document", url: s.source_url }]
+    })),
+  ];
+}
+
+export function MarketRulesDashboard({ report }: { report: typeof snapshot }) {
+  const rules = useMemo(() => radarRows(report), [report]);
   const [search, setSearch] = useState("");
-  const [process, setProcess] = useState<FilterValue<MarketRuleProcess>>("all");
+  const [process, setProcess] = useState<FilterValue<MarketRule["process"]>>("all");
+  const [kind, setKind] = useState<FilterValue<MarketRuleKind>>("all");
   const [status, setStatus] = useState<FilterValue<MarketRuleStatus>>("all");
   const [expandedRule, setExpandedRule] = useState<string | null>(null);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
@@ -220,40 +226,15 @@ export function MarketRulesDashboard({
       return (
         matchesSearch &&
         (process === "all" || rule.process === process) &&
+        (kind === "all" || kind === rule.kind) &&
         (status === "all" || rule.status === status)
       );
     });
-  }, [process, rules, search, status]);
+  }, [kind, process, rules, search, status]);
 
-  const attentionRules = useMemo(
-    () =>
-      [...rules]
-        .filter(
-          (rule) =>
-            rule.impact === "high" || rule.status === "coming",
-        )
-        .sort((first, second) => {
-          if (first.impact === "high" && second.impact !== "high") return -1;
-          if (first.impact !== "high" && second.impact === "high") return 1;
-          if (!first.key_date && !second.key_date) return 0;
-          if (!first.key_date) return 1;
-          if (!second.key_date) return -1;
-          return first.key_date.localeCompare(second.key_date);
-        }),
-    [rules],
-  );
-
-  const prerequisiteRules = useMemo(
-    () =>
-      // One row per prerequisite process, highest impact first.
-      (["licence", "balancing", "data", "billing"] as const).flatMap((processName) => {
-        const best = rules
-          .filter((rule) => rule.process === processName)
-          .sort((first, second) => impactRank[first.impact] - impactRank[second.impact])[0];
-        return best ? [best] : [];
-      }),
-    [rules],
-  );
+  const attentionRules = rules.filter(rule => rule.status === "For review");
+  const prerequisiteRules = (["licence", "balancing", "data", "billing"] as const)
+    .flatMap(process => attentionRules.filter(rule => rule.process === process).slice(0, 1));
 
   const attentionCount = attentionRules.length;
 
@@ -269,7 +250,7 @@ export function MarketRulesDashboard({
         return {
           name: processName,
           count: processRules.length,
-          highCount: processRules.filter((rule) => rule.impact === "high").length,
+          highCount: processRules.filter((rule) => rule.status === "For review").length,
           nextDate,
         };
       }),
@@ -279,6 +260,7 @@ export function MarketRulesDashboard({
   function clearFilters() {
     setSearch("");
     setProcess("all");
+    setKind("all");
     setStatus("all");
   }
 
@@ -378,11 +360,7 @@ export function MarketRulesDashboard({
             <p className="mt-1 text-[15px] leading-6 text-[#0C472F]/75 sm:text-lg">
               Energy market entry, supplier setup and regulatory compliance in the Netherlands
             </p>
-            {isMockData ? (
-              <p className="mt-2.5 inline-flex rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-3 py-1 text-xs font-medium text-[#0C472F]/75 sm:mt-3">
-                Temporary interface data · verified backend content pending
-              </p>
-            ) : null}
+            <p className="mt-2.5 inline-flex rounded-full border border-[#9BF3CF] bg-[#FFFDF7] px-3 py-1 text-xs font-medium text-[#0C472F]/75">Sources checked {report.asOf}</p>
           </header>
 
           <section className="market-panel mt-5 overflow-hidden sm:mt-7" aria-labelledby="attention-title">
@@ -436,7 +414,7 @@ export function MarketRulesDashboard({
               <table className="w-full min-w-[820px] border-collapse text-left text-sm">
                 <thead>
                   <tr>
-                    <th scope="col">Requirement</th>
+                    <th scope="col">Passage for review</th>
                     <th scope="col">Process</th>
                     <th scope="col">Status</th>
                     <th scope="col">Evidence / link</th>
@@ -464,7 +442,7 @@ export function MarketRulesDashboard({
                           "No source"
                         )}
                       </td>
-                      <td className="whitespace-nowrap">{rule.key_date ? formatDate(rule.key_date) : "Ongoing"}</td>
+                      <td className="whitespace-nowrap">{rule.key_date ? formatDate(rule.key_date) : "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -477,10 +455,10 @@ export function MarketRulesDashboard({
               <div>
                 <h2 id="rules-title" className="market-section-title">Market rules radar</h2>
                 <p aria-live="polite" className="mt-1 text-sm text-[#0C472F]/70">
-                  Showing {filteredRules.length} of {rules.length} rules
+                  Showing {filteredRules.length} of {rules.length} documents and passages
                 </p>
               </div>
-              {(search || process !== "all" || status !== "all") ? (
+              {(search || process !== "all" || kind !== "all" || status !== "all") ? (
                 <button type="button" className="text-sm font-medium underline underline-offset-4" onClick={clearFilters}>
                   Clear filters
                 </button>
@@ -507,12 +485,18 @@ export function MarketRulesDashboard({
                   options={complianceProcesses.map((value) => ({ value, label: processLabels[value] }))}
                 />
                 <SelectFilter
+                  label="Types"
+                  value={kind}
+                  onChange={setKind}
+                  options={Object.entries(kindLabels).map(([value, label]) => ({ value, label }))}
+                />
+                <SelectFilter
                   label="Statuses"
                   value={status}
                   onChange={setStatus}
                   options={[
-                    { value: "in_force", label: "In force" },
-                    { value: "coming", label: "Coming" },
+                    { value: "Collected", label: "Collected" },
+                    { value: "For review", label: "For review" },
                   ]}
                 />
               </div>
@@ -577,7 +561,7 @@ export function MarketRulesDashboard({
                     <th scope="col">Process</th>
                     <th scope="col">Decision question</th>
                     <th scope="col">Rules</th>
-                    <th scope="col">High impact</th>
+                    <th scope="col">For review</th>
                     <th scope="col">Next key date</th>
                   </tr>
                 </thead>

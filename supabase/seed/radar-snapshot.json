@@ -1,0 +1,135 @@
+{
+  "asOf": "2026-11-22",
+  "sources": [
+    {
+      "title": "Begrippencode elektriciteit 2026",
+      "source_url": "https://wetten.overheid.nl/BWBR0052320",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-07-09",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Gebiedsindelingscode elektriciteit",
+      "source_url": "https://wetten.overheid.nl/BWBR0037943",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2023-12-13",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Informatiecode elektriciteit en gas",
+      "source_url": "https://wetten.overheid.nl/BWBR0037934",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2025-01-01",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Meetcode elektriciteit",
+      "source_url": "https://wetten.overheid.nl/BWBR0037946",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2025-12-01",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Systeemcode elektriciteit 2026",
+      "source_url": "https://wetten.overheid.nl/BWBR0052336",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-10-01",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Systeemkoppelingscode TSB en DSB",
+      "source_url": "https://zoek.officielebekendmakingen.nl/stcrt-2026-4104.html",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": null,
+      "valid_to": null
+    },
+    {
+      "title": "Tarievencode elektriciteit 2026",
+      "source_url": "https://wetten.overheid.nl/BWBR0052321",
+      "document_kind": "acm_code",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-07-09",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Handreiking eindeleveringsprocedure energieleveranciers",
+      "source_url": "https://www.acm.nl/nl/publicaties/handreiking-eindeleveringsprocedure-energieleveranciers",
+      "document_kind": "guidance",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": null,
+      "valid_to": null
+    },
+    {
+      "title": "Eisen financiële positie energieleveranciers nader ingevuld",
+      "source_url": "https://www.acm.nl/nl/publicaties/eisen-financiele-positie-energieleveranciers-nader-ingevuld",
+      "document_kind": "policy",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": null,
+      "valid_to": null
+    },
+    {
+      "title": "Energiebesluit",
+      "source_url": "https://wetten.overheid.nl/BWBR0051745",
+      "document_kind": "regulation",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-01-01",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Energieregeling",
+      "source_url": "https://wetten.overheid.nl/BWBR0051774",
+      "document_kind": "regulation",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-09-02",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Energiewet",
+      "source_url": "https://wetten.overheid.nl/BWBR0050714",
+      "document_kind": "regulation",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-07-01",
+      "valid_to": "9999-12-31"
+    },
+    {
+      "title": "Invoeringsregeling Energiewet",
+      "source_url": "https://wetten.overheid.nl/BWBR0052069",
+      "document_kind": "regulation",
+      "checked_at": "2026-11-22T16:03:50.279771+00:00",
+      "valid_from": "2026-07-01",
+      "valid_to": "9999-12-31"
+    }
+  ],
+  "passages": [
+    {
+      "article": "2.5",
+      "title": "voorwaarden voor leveranciers",
+      "quote": "Een leverancier die elektriciteit of gas levert aan een eindafnemer levert tegen transparante en redelijke prijzen alsmede onder transparante en redelijke voorwaarden.",
+      "url": "https://wetten.overheid.nl/BWBR0050714/2026-07-01#Hoofdstuk2_Afdeling2.2_Paragraaf2.2.1_Artikel2.5",
+      "content_url": "https://repository.officiele-overheidspublicaties.nl/bwb/BWBR0050714/2026-07-01_0/xml/BWBR0050714_2026-07-01_0.xml",
+      "checked": "2026-11-22T16:03:50.279771+00:00"
+    },
+    {
+      "article": "2.17",
+      "title": "vergunningsplicht leverancier",
+      "quote": "Het is verboden zonder vergunning als bedoeld in artikel 2.18, derde lid, elektriciteit of gas te leveren aan een eindafnemer met een kleine aansluiting of te faciliteren in peer-to-peer-handel ten behoeve van een eindafnemer met een kleine aansluiting.",
+      "url": "https://wetten.overheid.nl/BWBR0050714/2026-07-01#Hoofdstuk2_Afdeling2.2_Paragraaf2.2.4_Artikel2.17",
+      "content_url": "https://repository.officiele-overheidspublicaties.nl/bwb/BWBR0050714/2026-07-01_0/xml/BWBR0050714_2026-07-01_0.xml",
+      "checked": "2026-11-22T16:03:50.279771+00:00"
+    },
+    {
+      "article": "2.32",
+      "title": "bewaarplicht leverancier",
+      "quote": "Een leverancier bewaart zijn administratie inzake overeenkomsten met eindafnemers, handelaren of transmissiesysteembeheerders en elektriciteitsderivaten met handelaren of transmissiesysteembeheerders gedurende een periode van vijf jaar en houdt deze gedurende die periode ter beschikking voor de Autoriteit Consument en Markt en de Europese Commissie.",
+      "url": "https://wetten.overheid.nl/BWBR0050714/2026-07-01#Hoofdstuk2_Afdeling2.2_Paragraaf2.2.7_Artikel2.32",
+      "content_url": "https://repository.officiele-overheidspublicaties.nl/bwb/BWBR0050714/2026-07-01_0/xml/BWBR0050714_2026-07-01_0.xml",
+      "checked": "2026-11-22T16:03:50.279771+00:00"
+    }
+  ]
+}

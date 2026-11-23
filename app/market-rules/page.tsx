@@ -1,14 +1,6 @@
 import { MarketRulesDashboard } from "@/components/market-rules-dashboard";
-import {
-  marketRules,
-  marketRulesAreMockData,
-} from "@/lib/data/market-rules";
+import snapshot from "@/supabase/seed/radar-snapshot.json";
 
 export default function MarketRulesPage() {
-  return (
-    <MarketRulesDashboard
-      rules={marketRules}
-      isMockData={marketRulesAreMockData}
-    />
-  );
+  return <MarketRulesDashboard report={snapshot} />;
 }

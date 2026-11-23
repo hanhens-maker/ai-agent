@@ -1,0 +1,30 @@
+name: Refresh electricity radar
+on:
+  schedule:
+    - cron: "15 7 1 1,4,7,10 *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect official sources
+        run: python3 scripts/collect_compliance_sources.py --output "$RUNNER_TEMP/radar.json"
+      - name: Extract supplier passages
+        run: python3 scripts/build_radar_snapshot.py "$RUNNER_TEMP/radar.json"
+      - name: Submit the snapshot for review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- supabase/seed/radar-snapshot.json; then exit 0; fi
+          branch="radar/quarterly-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$branch"
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          git add supabase/seed/radar-snapshot.json
+          git commit -m "Refresh official electricity sources"
+          git push origin "$branch"
+          gh pr create --base "$GITHUB_REF_NAME" --head "$branch" --title "Review quarterly electricity snapshot" --body "Review the official document links and quoted Energiewet passages before publication."
